@@ -44,6 +44,9 @@ def init(pid):
 # command has bit 7 set
 
 PARAM_ALARM           = 0x21
+PARAM_EXERCISE        = 0x23
+PARAM_VALVE_POSITION  = 0x25
+PARAM_DIAGNOSTICS     = 0x26
 PARAM_DEBUG_OUTPUT    = 0x2D
 PARAM_IDENTIFY        = 0x3F
 PARAM_SOURCE_SELECTOR = 0x40 # command only
@@ -92,6 +95,9 @@ PARAM_TEST            = 0xAA
 
 param_info = {
 	PARAM_ALARM           : {"n":"ALARM",				"u":""},
+	PARAM_EXERCISE        : {"n":"EXERCISE",			"u":""},
+	PARAM_VALVE_POSITION  : {"n":"VALVE_POSITION",		"u":""},
+	PARAM_DIAGNOSTICS     : {"n":"DIAGNOSTICS",			"u":""},
 	PARAM_DEBUG_OUTPUT    : {"n":"DEBUG_OUTPUT",		"u":""},
 	PARAM_IDENTIFY        : {"n":"IDENTIFY",			"u":""},
 	PARAM_SOURCE_SELECTOR : {"n":"SOURCE_SELECTOR",		"u":""},
@@ -519,7 +525,6 @@ class Value():
 						result = [0xFF for x in range(length-len(result))] + result
 				elif len(result) >length: # overflow
 					raise ValueError("Field width overflow, not enough bits")
-
 			return result
 
 		raise ValueError("Unknown typeid:%d" % typeid)

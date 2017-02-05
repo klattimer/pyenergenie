@@ -21,7 +21,6 @@ try:
     import TwoBit
     import radio
     from lifecycle import *
-
 except ImportError:
     # Python 3
     from . import OpenThings
@@ -50,10 +49,13 @@ class OpenThingsAirInterface():
         self.rx_defaults = RxDefaults()
 
     ##@log_method
-    def send(self, payload, radio_config=None):
+    def send(self, payload, radio_config=None, encoded=False):
         #   payload is a pydict suitable for OpenThings
         #   radio_params is an overlay on top of radio tx defaults
-        p = OpenThings.encode(payload)
+        if encoded:
+            p = payload
+        else:
+            p = OpenThings.encode(payload)
 
         # Set radio defaults, if no override
         outer_times = self.tx_defaults.outer_times
@@ -75,6 +77,9 @@ class OpenThingsAirInterface():
         radio.transmitter(fsk=True)
         ##print("inner times %s" % inner_times)
         radio.transmit(p, outer_times=outer_times, inner_times=inner_times, outer_delay=outer_delay)
+        if encoded:
+            payload = OpenThings.decode(p)
+        radio.receiver(fsk=True)
         # radio auto-returns to previous state after transmit completes
 
     ##@log_method
