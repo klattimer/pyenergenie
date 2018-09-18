@@ -65,7 +65,7 @@ class DeviceRegistry(): # this is actions, so is this the 'RegistRAR'??
         if self.fsk_router != None:
             if c.can_send(): # if can transmit, we can receive from it
                 if isinstance(c, Devices.MiHomeDevice):
-                    print("Adding rx route for transmit enabled device %s" % c)
+                    #print("Adding rx route for transmit enabled device %s" % c)
                     address = (c.manufacturer_id, c.product_id, c.device_id)
                     self.fsk_router.add(address, c)
         return c
@@ -114,7 +114,7 @@ class DeviceRegistry(): # this is actions, so is this the 'RegistRAR'??
     def names(self):
         """A generator/iterator that can be used to get a list of device names"""
         # first get a list of all devices, in case the registry changes while iterating
-        devices = list(self.store.keys())
+        devices = self.store.keys()
 
         # now 'generate' one per call
         i = 0
@@ -193,15 +193,15 @@ class Router():
         if self.incoming_cb != None:
             self.incoming_cb(address, message)
 
-        ##print("router.incoming addr=%s" % str(address))
-        ##print("routes:%s" % str(self.routes))
+        #print("router.incoming addr=%s" % str(address))
+        #print("routes:%s" % str(self.routes))
 
         if address in self.routes:
             ci = self.routes[address]
             ci.incoming_message(message)
 
         else: # address has no route
-            print("No route to an object, for device:%s" % str(address))
+            print"No route to an object, for device:",str(address),str(message)
             #TODO: Could consult registry and squash if registry knows it
             self.handle_unknown(address, message)
 

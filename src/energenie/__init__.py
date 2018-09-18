@@ -48,9 +48,9 @@ def init():
 
     if os.path.isfile(registry.DEFAULT_FILENAME):
         registry.load_from(registry.DEFAULT_FILENAME)
-        print("loaded registry from file")
-        registry.list()
-        fsk_router.list()
+        #print("loaded registry from file")
+        #registry.list()
+        #fsk_router.list()
 
     # Default discovery mode, unless changed by app
     ##discovery_none()
@@ -78,13 +78,15 @@ def loop(receive_time=1):
                 device_id  = hdr["sensorid"]
                 address    = (mfr_id, product_id, device_id)
 
+                #print "received ", time.time()
                 registry.fsk_router.incoming_message(address, msg)
                 handled = True
             except OpenThings.OpenThingsException:
-                print("Can't decode payload:%s" % payload)
+                #print("Can't decode payload:%s" % payload)
+                error=True
 
         now = time.time()
-        if now > timeout: break
+        if now > timeout or handled: break
 
     return handled
 

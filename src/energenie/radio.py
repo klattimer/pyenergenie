@@ -95,6 +95,7 @@ def modulation(fsk=None, ook=None):
 
 def transmitter(fsk=None, ook=None):
     """Change into transmitter mode"""
+    #print("transmitter",fsk,ook);
     #extern void radio_transmitter(RADIO_MODULATION mod);
     if ook:
         m = ctypes.c_int(RADIO_MODULATION_OOK)
@@ -144,6 +145,10 @@ def send_payload(payload, outer_times=1, inner_times=8, outer_delay=0):
     #Note, this does not do a mode change before or after,
     #and assumes the mode is already transmit
     #extern void radio_send_payload(uint8_t* payload, uint8_t len, uint8_t times);
+
+    out_times=4
+    inner_times=4
+    outer_delay=0.01
 
     framelen = len(payload)
     if framelen < 1 or framelen > 255:

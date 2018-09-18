@@ -91,6 +91,7 @@ PARAM_VOLTAGE         = 0x76
 PARAM_WATER_FLOW_RATE = 0x77
 PARAM_WATER_PRESSURE  = 0x78
 
+
 PARAM_TEST            = 0xAA
 
 param_info = {
@@ -141,6 +142,7 @@ param_info = {
 	PARAM_VOLTAGE         : {"n":"VOLTAGE",				"u":"V"},
 	PARAM_WATER_FLOW_RATE : {"n":"WATER_FLOW_RATE",		"u":"l/hr"},
 	PARAM_WATER_PRESSURE  : {"n":"WATER_PRESSURE",		"u":"Pa"},
+
 }
 
 
@@ -258,6 +260,8 @@ def decode(payload, decrypt=True, receive_timestamp=None):
 			value = Value.decode(valuebytes, typeid, plen)
 			rec["valuebytes"] = valuebytes
 			rec["value"] = value
+			#if sensorId==3701:
+			#	print paramname,plen,valuebytes,value
 
 		# store rec
 		recs.append(rec)
@@ -283,6 +287,8 @@ def encode(spec, encrypt=True):
 	"""Encode a pydict specification into a OpenThings binary payload"""
 	# The message is not encrypted, but the CRC is generated here.
 
+	#print(time.time(), 'Send unencrypted: {}'.format(spec))
+
 	payload = []
 
 	# HEADER
@@ -298,8 +304,12 @@ def encode(spec, encrypt=True):
 		encryptPIP = 0x0100
 	else:
 		encryptPIP = header["encryptPIP"]
+		
+	encryptPIP=0x6d49
+	
 	payload.append((encryptPIP&0xFF00)>>8) # MSB
 	payload.append((encryptPIP&0xFF))      # LSB
+	
 
 	sensorId = header["sensorid"]
 	payload.append((sensorId>>16) & 0xFF) # HIGH
@@ -345,6 +355,9 @@ def encode(spec, encrypt=True):
 
 	# back-patch the length byte so it is correct
 	payload[0] = len(payload)-1
+	
+	#print(time.time(), 'Send unencrypted: {}'.format(payload))
+	#print ' '.join([hex(i) for i in payload])
 
 	if encrypt:
 		# ENCRYPT
@@ -352,6 +365,9 @@ def encode(spec, encrypt=True):
 		crypto.init(crypt_pid, encryptPIP)
 		crypto.cryptPayload(payload, 5, len(payload)-5) # including CRC
 
+	#print(time.time(), 'Send encrypted: {}'.format(payload))
+	#print ' '.join([hex(i) for i in payload])
+	
 	return payload
 
 

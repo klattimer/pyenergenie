@@ -13,6 +13,7 @@
 # NOTE: This also might include intelligent power level selection based
 # on RSSI reports from different devices.
 
+from lifecycle import *
 import time
 
 try:
@@ -20,13 +21,12 @@ try:
     import OpenThings
     import TwoBit
     import radio
-    from lifecycle import *
 except ImportError:
     # Python 3
     from . import OpenThings
     from . import TwoBit
     from . import radio
-    from .lifecycle import *
+
 
 class OpenThingsAirInterface():
     def __init__(self):
@@ -52,6 +52,8 @@ class OpenThingsAirInterface():
     def send(self, payload, radio_config=None, encoded=False):
         #   payload is a pydict suitable for OpenThings
         #   radio_params is an overlay on top of radio tx defaults
+        
+        
         if encoded:
             p = payload
         else:
@@ -80,6 +82,7 @@ class OpenThingsAirInterface():
         if encoded:
             payload = OpenThings.decode(p)
         radio.receiver(fsk=True)
+        #print(time.time(), 'Send decoded: {}'.format(payload))
         # radio auto-returns to previous state after transmit completes
 
     ##@log_method

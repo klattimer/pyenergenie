@@ -8,6 +8,8 @@
 import time
 import copy
 import random
+import sys
+import traceback
 try:
     # Python 2
     import OnAir
@@ -339,6 +341,7 @@ class Device():
         self.capabilities = Capabilities()
         self.updated_cb = None
         self.rxseq = 0
+        self.lastHandledMessage = 0
 
     def get_config(self):
         raise RuntimeError("There is no configuration for a base Device")
@@ -456,6 +459,7 @@ class Device():
         self.handle_message(payload)
         if self.updated_cb != None:
             self.updated_cb(self, payload)
+        self.lastHandledMessage=time.time()
 
     def handle_message(self, payload):
         """Default handling for a new message"""
@@ -594,7 +598,6 @@ class MiHomeDevice(EnergenieDevice):
         #TODO: We know it's going over OpenThings,
         #do we call OpenThings.encode(payload) here?
         #also OpenThings.encrypt() - done by encode() as default
-        print "send"
         if self.air_interface != None:
             #TODO: might want to send the config, either as a send parameter,
             #or by calling air_interface.configure() first?
@@ -848,7 +851,7 @@ class MIHO005(MiHomeDevice):
         return MiHomeDevice.get_join_req(MFRID_ENERGENIE, PRODUCTID_MIHO004, deviceid)
 
     def handle_message(self, payload):
-        ##print("MIHO005 new data %s %s" % (self.device_id, payload))
+        #print("MIHO005 new data %s %s" % (self.device_id, payload))
         for rec in payload["recs"]:
             paramid = rec["paramid"]
             #TODO: consider making this table driven and allowing our base class to fill our readings in for us
@@ -1045,13 +1048,14 @@ class MIHO013(MiHomeDevice):
         if len(self.send_queue)>0:
         	message=self.send_queue.pop(0)
         	self.send_message(message);
+        	#print ("MIHO013 send %s",self.device_id)
         
         #extract data from message
         for rec in payload["recs"]:
             paramid = rec["paramid"]
             if "value" in rec:
                 value = rec["value"]
-                print("MIHO013 new data %s %s %s" % (self.device_id, OpenThings.paramid_to_paramname(paramid), value))
+                #print("MIHO013 new data %s %s %s" % (self.device_id, OpenThings.paramid_to_paramname(paramid), value))
                 if paramid == OpenThings.PARAM_TEMPERATURE:
                     self.readings.ambient_temperature = value
                 if paramid == OpenThings.PARAM_VOLTAGE:
@@ -1082,17 +1086,17 @@ class MIHO013(MiHomeDevice):
 
     def set_setpoint_temperature(self, temperature):
     	self.readings.setpoint_temperature = temperature;
-        payload = OpenThings.Message(MIHO013_SET_TEMPERATURE)
+        payload = OpenThings.Message(MIHO013_SET_TEMPERATURE).copyof()
         payload.set(recs_TEMPERATURE_value=int(temperature*8))
         self.queue_message(payload)
 
     def set_valve_position(self, position):
-		payload = OpenThings.Message(MIHO013_SET_VALVE_POSITION)
+		payload = OpenThings.Message(MIHO013_SET_VALVE_POSITION).copyof()
 		payload.set(recs_VALVE_POSITION_value=position)
 		self.queue_message(payload)   
 
     def set_identify(self):
-        self.queue_message(OpenThings.Message(MIHO013_IDENTIFY))
+        self.queue_message(OpenThings.Message(MIHO013_IDENTIFY).copyof())
 
     def turn_on(self): 
         self.set_valve_position(0)
@@ -1116,12 +1120,17 @@ class MIHO032(MiHomeDevice):
             battery_alarm = None
         self.readings = Readings()
         self.capabilities.send = True
+        self.callback=None
 
     def __repr__(self):
         return "MIHO032(%s)" % str(hex(self.device_id))
+        
+    def setCallback(self,callback):
+        self.callback=callback
 
     def handle_message(self, payload):
         ##print("MIHO032 new data %s %s" % (self.device_id, payload))
+        ##sys.stdout.flush()
         for rec in payload["recs"]:
             paramid = rec["paramid"]
             #TODO: consider making this table driven and allowing our base class to fill our readings in for us
@@ -1132,7 +1141,12 @@ class MIHO032(MiHomeDevice):
             if "value" in rec:
                 value = rec["value"]
                 if paramid == OpenThings.PARAM_MOTION_DETECTOR:
-                    self.readings.switch_state = ((value == True) or (value != 0))
+                    state = ((value == True) or (value != 0));
+                    if self.readings.switch_state!= state:
+                       self.readings.switch_state = state
+                       #print("MIHO032 new data %s %s" % (self.device_id, payload))
+                       if self.callback!=None:
+                           self.callback(self,state)
                 elif paramid == OpenThings.PARAM_ALARM:
                     if value == 0x42: # battery alarming
                         self.readings.battery_alarm = True
