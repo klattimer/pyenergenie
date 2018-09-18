@@ -1,9 +1,9 @@
+> **Why this fork?** - Support for energenie eTVRs (MIHO0013) wasn't there in original repo. I managed to get them working in this code base and all major functionality is supported including getting battery levels and diagnostic codes. I have asked whaleygeek if the changes could be merged but received no response.
+
 # pyenergenie
 A python interface to the Energenie line of products
 
 https://energenie4u.co.uk/
-
-> **Why this fork?** - Support for energenie eTVRs (MIHO0013) wasn't there. I managed to get them working in this code base and all major functionality is supported including getting battery levels and diagnostic codes. 
 
 
 WHERE IS THE BEST PLACE TO GET THE CODE?
