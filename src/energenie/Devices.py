@@ -178,7 +178,7 @@ MIHO013_SET_TEMPERATURE = {
         {
             "wr":      True,
             "paramid": OpenThings.PARAM_TEMPERATURE,
-            "typeid":  0x92,
+            "typeid":  OpenThings.Value.SINT_BP8,
             "length":  2,
             "value":   0 # FILL IN
         }
@@ -1033,7 +1033,6 @@ class MIHO013(MiHomeDevice):
         self.diagnosticsReadingPeriod = 3600
 
     def handle_message(self, payload):
-        
         # check if it's time to refresh readings
         now=time.time()
         if self.voltageReadingPeriod != None and ( self.lastVoltageReading == None or now-self.lastVoltageReading>self.voltageReadingPeriod):
@@ -1048,7 +1047,7 @@ class MIHO013(MiHomeDevice):
         if len(self.send_queue)>0:
         	message=self.send_queue.pop(0)
         	self.send_message(message);
-        	#print ("MIHO013 send %s",self.device_id)
+        	#print ("MIHO013 send %s (%s)" % (self.device_id, len(self.send_queue)))
         
         #extract data from message
         for rec in payload["recs"]:
@@ -1085,9 +1084,13 @@ class MIHO013(MiHomeDevice):
         return self.readings.setpoint_temperature
 
     def set_setpoint_temperature(self, temperature):
-    	self.readings.setpoint_temperature = temperature;
+        self.readings.setpoint_temperature = temperature;
         payload = OpenThings.Message(MIHO013_SET_TEMPERATURE).copyof()
-        payload.set(recs_TEMPERATURE_value=int(temperature*8))
+        if temperature<0:
+            temperature=0
+        if temperature>30:
+            temperature=30
+        payload.set(recs_TEMPERATURE_value=int(temperature*256))
         self.queue_message(payload)
 
     def set_valve_position(self, position):
