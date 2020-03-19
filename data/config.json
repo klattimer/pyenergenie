@@ -1,0 +1,32 @@
+{
+    "radio": {
+        "type": "RFM69HCW",
+        "frequency": "434.30 MHz",
+        "MOSI": 10,
+        "MISO": 9,
+        "SCLK": 11,
+        "CS": 7,
+        "RESET": 25
+    },
+    "mqtt": {
+        "host": "192.168.1.1",
+        "port": 1172,
+        "username": "energenie",
+        "password": "secret"
+    },
+    "webhooks": [
+        {
+            "url": "https://192.168.1.1/my/endpoint",
+            "authorization_token": "token",
+            "format": "JSON"
+        }
+    ],
+    "devices": [
+        {
+            "name": "Bedroom Radiator",
+            "type": "MIHO013",
+            "device_id": 3627,
+            "enabled": True
+        }
+    ]
+}
