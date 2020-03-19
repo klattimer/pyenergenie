@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import OnAir
+from .. import OnAir
 import os
 import importlib
 import time
