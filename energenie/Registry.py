@@ -231,7 +231,7 @@ class Router():
             ci.incoming_message(message)
 
         else:  # address has no route
-            print"No route to an object, for device:", str(address), str(message)
+            print ("No route to an object, for device:", str(address), str(message))
             # TODO: Could consult registry and squash if registry knows it
             self.handle_unknown(address, message)
 

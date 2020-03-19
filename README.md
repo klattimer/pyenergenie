@@ -1,3 +1,7 @@
+> **Why **THIS** fork?** - The code that was provided originally was messy
+difficult to maintain, full of lint errors and implemented things that you
+shouldn't generally go about implementing from scratch yourself... [klattimer]
+
 > **Why this fork?** - Support for energenie eTVRs (MIHO0013) wasn't there in original repo. I managed to get them working in this code base and all major functionality is supported including getting battery levels and diagnostic codes. I have asked whaleygeek if the changes could be merged but received no response.
 
 # pyenergenie
@@ -50,9 +54,9 @@ this code, which now supports all models of Raspberry Pi, and all devices
 from Energenie (including the old green button devices and the new
 MiHome monitor devices).
 
-The Energenie product line uses the HopeRF radio transciever, and the OpenThings 
-protocol from Sentec. Energenie have built a RaspberryPi add-on board that 
-interfaces to the HopeRF RFM69, and allows both control and monitoring of their 
+The Energenie product line uses the HopeRF radio transciever, and the OpenThings
+protocol from Sentec. Energenie have built a RaspberryPi add-on board that
+interfaces to the HopeRF RFM69, and allows both control and monitoring of their
 products from a Raspberry Pi.
 
 Energenie have some (old) sample code written in C to control and monitor
@@ -159,7 +163,7 @@ mihome_energy_monitor.py  a simple logger that logs all energy messages to energ
 Gotcha's
 ====
 
-Please note that there are two different radio standards in use in this library. 
+Please note that there are two different radio standards in use in this library.
 There is an OOK (On Off Keying) based system that is used by the original legacy green-button sockets.
 There is also an FSK (Frequency Shift Keying) based system used by the MiHome range.
 
@@ -168,12 +172,12 @@ branded as the MiHome range, but are internally a legacy device. This means that
 need to use the Legacy Learn feature with those, instead of the MiHome discovery.
 
 The MIHO002 for example is an OOK device, so you need to use the legacy learn mode
-with that. 
+with that.
 
 As a general rule, if a device is receive-only, it uses the OOK legacy protocol.
 If a device has any transmit features, it uses the MiHome FSK protocol.
 
-There is a full list of devices in the energenie/devices.py file along with their 
+There is a full list of devices in the energenie/devices.py file along with their
 OOK or FSK mode. OOK means Legacy Learn, FSK means MiHome Discovery.
 
 Future work

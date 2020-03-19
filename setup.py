@@ -7,7 +7,7 @@ PYENERGENIE_DOWNLOAD_URL = (
 
 setup(
     name='pyenergenie',
-    packages=['pyenergenie'],
+    packages=['energenie'],
     version=PYENERGENIE_VERSION,
     description='Energinie interface in python.',
     long_description='',
@@ -18,7 +18,7 @@ setup(
     download_url=PYENERGENIE_DOWNLOAD_URL,
     entry_points={
         'console_scripts': [
-            'pyenergenie=pyenergenie:main'
+            'pyenergenie=energenie:main'
         ]
     },
     keywords=[
