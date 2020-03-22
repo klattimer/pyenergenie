@@ -47,12 +47,15 @@ def find_config():
 class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
     """A persistent registry for device class instance configurations"""
 
-    def __init__(self, fsk_router=None, ook_router=None):
+    def __init__(self):
         # # print("***Opening DeviceRegistry")
         config_path = find_config()
         self.devices = {}
-        self.fsk_router = fsk_router
-        self.ook_router = ook_router
+        self.fsk_router = Router("fsk")
+
+        # OOK receive not yet written
+        # It will be used to be able to learn codes from Energenie legacy hand remotes
+        self.ook_router = None # Router("ook")
         self.load_from(config_path)
 
     def set_fsk_router(self, fsk_router):

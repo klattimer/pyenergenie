@@ -32,18 +32,9 @@ class Energenie(threading.Thread):
         radio.init()
         OpenThings.init(Devices.Device._crypt_pid)
 
-        self.fsk_router = Registry.Router("fsk")
-        self.ook_router = None
-        # OOK receive not yet written
-        # It will be used to be able to learn codes from Energenie legacy hand remotes
-        # #self.ook_router = Registry.Router("ook")
-
         self.registry = Registry.DeviceRegistry()
-        self.registry.set_fsk_router(self.fsk_router)
-        # #self.registry.set_ook_router(self.ook_router
 
         # registry.list()
-        # fsk_router.list()
 
         # Default discovery mode, unless changed by app
         # #discovery_none()
