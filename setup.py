@@ -1,4 +1,5 @@
 from setuptools import setup
+import setuptools
 
 PYENERGENIE_VERSION = '0.2'
 PYENERGENIE_DOWNLOAD_URL = (
