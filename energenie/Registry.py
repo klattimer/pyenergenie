@@ -8,6 +8,7 @@ import os
 import json
 
 from . import Devices
+from energenie.Devices.MiHomeDevice import MiHomeDevice
 from . import OpenThings
 
 
@@ -95,7 +96,7 @@ class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
 
         if self.fsk_router is not None:
             if c.can_send():  # if can transmit, we can receive from it
-                if isinstance(c, Devices.MiHomeDevice):
+                if isinstance(c, MiHomeDevice):
                     # print("Adding rx route for transmit enabled device %s" % c)
                     address = (c.manufacturer_id, c.product_id, c.device_id)
                     self.fsk_router.add(address, c)
