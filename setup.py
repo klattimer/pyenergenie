@@ -31,7 +31,7 @@ setup(
     ],
     data_files=[
         ('config', ['data/config.json']),
-        ('energenie/drv', ['energenie/drv/radio_rpi.so']')
+        ('energenie/drv', ['energenie/drv/radio_rpi.so'])
     ],
     classifiers=[
         'Intended Audience :: Developers',
