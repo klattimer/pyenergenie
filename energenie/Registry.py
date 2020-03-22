@@ -270,10 +270,10 @@ class Router():
 
 class Discovery():
     """A Discovery agent that just reports any unknown devices"""
-    def __init__(self, registry, router):
+    def __init__(self, registry):
         self.registry = registry
-        self.router   = router
-        router.when_unknown(self.unknown_device)
+        self.router   = self.registry.fsk_router
+        self.registry.fsk_router.when_unknown(self.unknown_device)
 
     def unknown_device(self, address, message):
         print("message from unknown device:%s" % str(address))
@@ -307,8 +307,8 @@ class Discovery():
 
 class AutoDiscovery(Discovery):
     """A discovery agent that auto adds unknown devices"""
-    def __init__(self, registry, router):
-        Discovery.__init__(self, registry, router)
+    def __init__(self, registry):
+        Discovery.__init__(self, registry)
 
     def unknown_device(self, address, message):
         self.accept_device(address, message)
@@ -316,8 +316,8 @@ class AutoDiscovery(Discovery):
 
 class ConfirmedDiscovery(Discovery):
     """A discovery agent that asks the app before accepting/rejecting"""
-    def __init__(self, registry, router, ask):
-        Discovery.__init__(self, registry, router)
+    def __init__(self, registry, ask):
+        Discovery.__init__(self, registry)
         self.ask_fn = ask
 
     def unknown_device(self, address, message):
@@ -330,8 +330,8 @@ class ConfirmedDiscovery(Discovery):
 
 class JoinAutoDiscovery(Discovery):
     """A discovery agent that looks for join requests, and auto adds"""
-    def __init__(self, registry, router):
-        Discovery.__init__(self, registry, router)
+    def __init__(self, registry):
+        Discovery.__init__(self, registry)
 
     def unknown_device(self, address, message):
         # #print("unknown device auto join %s" % str(address))
@@ -353,8 +353,8 @@ class JoinAutoDiscovery(Discovery):
 
 class JoinConfirmedDiscovery(Discovery):
     """A discovery agent that looks for join requests, and auto adds"""
-    def __init__(self, registry, router, ask):
-        Discovery.__init__(self, registry, router)
+    def __init__(self, registry, ask):
+        Discovery.__init__(self, registry)
         self.ask_fn = ask
 
     def unknown_device(self, address, message):

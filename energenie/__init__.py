@@ -33,6 +33,7 @@ class Energenie(threading.Thread):
         OpenThings.init(Devices.Device._crypt_pid)
 
         self.registry = Registry.DeviceRegistry()
+        self.ask_fn = self.ask
 
         # registry.list()
 
@@ -101,15 +102,15 @@ class Energenie(threading.Thread):
         # #print("Using auto discovery")
 
     def discovery_ask(self, ask_fn):
-        Registry.ConfirmedDiscovery(self.registry, self.fsk_router, self.ask_fn)
+        Registry.ConfirmedDiscovery(self.registry, self.ask_fn)
         # #print("using confirmed discovery")
 
     def discovery_autojoin(self):
-        Registry.JoinAutoDiscovery(registry, fsk_router)
+        Registry.JoinAutoDiscovery(self.registry)
         # #print("using auto join discovery")
 
     def discovery_askjoin(self, ask_fn):
-        Registry.JoinConfirmedDiscovery(registry, fsk_router, ask_fn)
+        Registry.JoinConfirmedDiscovery(self.registry, ask_fn)
         # #print("using confirmed join discovery")
 
     def ask(self, address, message):
