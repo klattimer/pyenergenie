@@ -154,7 +154,7 @@ class MIHO013(MiHomeDevice):
 
     def set_setpoint_temperature(self, temperature):
         self.readings.setpoint_temperature = temperature
-        payload = OpenThings.Message(MIHO013_SET_TEMPERATURE, header=self.__class_.header()).copyof()
+        payload = OpenThings.Message(MIHO013_SET_TEMPERATURE, header=self.__class__.header()).copyof()
         if temperature < 0:
             temperature = 0
         if temperature > 30:
@@ -163,12 +163,12 @@ class MIHO013(MiHomeDevice):
         self.queue_message(payload)
 
     def set_valve_position(self, position):
-        payload = OpenThings.Message(MIHO013_SET_VALVE_POSITION, header=self.__class_.header()).copyof()
+        payload = OpenThings.Message(MIHO013_SET_VALVE_POSITION, header=self.__class__.header()).copyof()
         payload.set(recs_VALVE_POSITION_value=position)
         self.queue_message(payload)
 
     def set_identify(self):
-        self.queue_message(OpenThings.Message(MIHO013_IDENTIFY, header=self.__class_.header()).copyof())
+        self.queue_message(OpenThings.Message(MIHO013_IDENTIFY, header=self.__class__.header()).copyof())
 
     def turn_on(self):
         self.set_valve_position(0)
