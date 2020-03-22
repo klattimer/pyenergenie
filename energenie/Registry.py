@@ -312,8 +312,8 @@ class Discovery():
         # At moment, intentionally assume everything is mfrid=Energenie
         product_id = address[1]
         device_id  = address[2]
-        # #print("**** wiring up registry and router for %s" % str(address))
-        ci = Devices.DeviceFactory.get_device_from_id(product_id, device_id)
+        print("**** wiring up registry and router for %s" % str(address))
+        ci = Devices.DeviceFactory.get_device_from_id(product_id, device_id=device_id)
         self.registry.add(ci, "auto_%s_%s" % (str(hex(product_id)), str(hex(device_id))))
         self.router.add(address, ci)
 
