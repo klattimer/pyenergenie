@@ -1,4 +1,5 @@
 from cmd import Cmd
+from energenie.Devices import DeviceFactory
 
 
 class EnergenieShell(Cmd):
@@ -9,7 +10,7 @@ class EnergenieShell(Cmd):
         super(EnergenieShell, self).__init__()
         self.energenie = energenie
 
-    def do_add(self, device_type, device_id):
+    def do_add(self, name, device_type, device_id):
         """
         Add a devjce
         """
@@ -19,10 +20,20 @@ class EnergenieShell(Cmd):
         Remove a device
         """
 
+    def do_drivers(self):
+        drivers = DeviceFactory.singleton().keys()
+        drivers = [DeviceFactory.singleton()[d].describe for d in drivers]
+        for d in drivers:
+            for k, v in d.items():
+                print ("%s: %s" % (k, v))
+
     def do_list(self):
         """
         List configured devices
         """
+        devices = self.energenie.registry.list()
+        for d in devices:
+            print ("%s: %s" % (d, self.energenie.registry.devices[d]))
 
     def do_discover(self, mode):
         """
