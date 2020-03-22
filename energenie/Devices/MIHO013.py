@@ -118,7 +118,7 @@ class MIHO013(MiHomeDevice):
             message = self.send_queue.pop(0)
             self.send_message(message)
             print ("MIHO013 send %s (%s)" % (self.device_id, len(self.send_queue)))
-            print("Sent message " % str(message))
+            print("Sent message %s" % str(message))
 
         # extract data from message
         for rec in payload["recs"]:
@@ -139,7 +139,7 @@ class MIHO013(MiHomeDevice):
             header_sensorid=self.device_id,
             header_encryptPIP=int(random.randrange(0xFFFF))
         )
-        print("Queuing message " % str(message))
+        print("Queuing message %s " % str(message))
         self.send_queue.append(copy.copy(message))
 
     def get_battery_voltage(self):  # ->voltage:float
