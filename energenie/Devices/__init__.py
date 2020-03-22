@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from .. import OnAir
+from .. import Registry
 import os
 import importlib
 import time
@@ -17,6 +18,22 @@ class Device():
     _product_description = "Base Class used for OpenThings devices"
     _product_rf = None
     _product_url = None
+
+    @property
+    def address(self):
+        return (self._manufacturer_id, self._product_id, self.device_id)
+
+    @property
+    def enabled(self):
+        return self._enabled
+
+    @enabled.setter
+    def enabled(self, value):
+        if value is True:
+            Registry.DeviceRegistry.singleton().setup_device_routing(self)
+        else:
+            Registry.DeviceRegistry.singleton().remove_device_routing(self)
+        self._enabled = value
 
     @classmethod
     def describe(cls):
@@ -59,7 +76,7 @@ class Device():
                 self.air_interface = None
         self.device_id = self.parse_device_id(device_id)
         self.name = name
-        self.enabled = True
+        self._enabled = enabled
         if uuid is None:
             uuid = str(uuid4())
         self.uuid = uuid
@@ -241,10 +258,6 @@ class DeviceFactory:
         return c(**kw_args)
 
     def __init__(self):
-        # self.__class__.
-        # self.__class__.
-        # Read through all the files in the Devices folder, ignoring ourself
-
         self.product_id_index = {}
         self.product_name_index = {}
 
@@ -265,10 +278,3 @@ class DeviceFactory:
 
             self.product_id_index[plugin._product_id] = plugin
             self.product_name_index[m] = plugin
-
-        # Load class named the same as filename ONLY, we want strong device
-        # separation in the drivers, so regardless of minimum implementation
-        # they're easy to find/manage
-
-        # Get the class description, and register that in our storage
-        pass

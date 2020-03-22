@@ -123,17 +123,16 @@ class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
         return c
 
     def setup_device_routing(self, c):
-        print("Configuring device routing")
-        if self.fsk_router is not None:
-            print("FSK Router started")
-            if c.can_send():  # if can transmit, we can receive from it
-                print("%s can send " % c.__class__.__name__)
-                if isinstance(c, MiHomeDevice):
-                    print("%s is a MiHomeDevice" % c.__class__.__name__)
-                    address = (c._manufacturer_id, c._product_id, c.device_id)
-                    print("Adding rx route for transmit enabled device %s" % str(address))
-                    self.fsk_router.add(address, c)
+        # if can transmit, we can receive from it
+        if self.fsk_router is not None and c.can_send():
+            if isinstance(c, MiHomeDevice):
+                self.fsk_router.add(c)
         return c
+
+    def remove_device_routing(self, c):
+        if self.fsk_router is not None and c.can_send():
+            if c.address in self.fsk_router.routes.keys():
+                del(self.fsk_router.routes[c.address])
 
     def rename(self, old_name, new_name):
         """Rename a device in the registry"""
@@ -243,11 +242,11 @@ class Router():
         self.unknown_cb = None
         self.incoming_cb = None
 
-    def add(self, address, instance):
+    def add(self, instance):
         """Add this device instance to the routing table"""
         # When a message comes in for this address, it will be routed to its handle_message() method
         # address might be a string, a number, a tuple, but probably always the same for any one router
-        self.routes[address] = instance
+        self.routes[instance.address] = instance
 
     def list(self):
         print("ROUTES:")
@@ -315,7 +314,7 @@ class Discovery():
         print("**** wiring up registry and router for %s" % str(address))
         ci = Devices.DeviceFactory.get_device_from_id(product_id, device_id=device_id)
         self.registry.add(ci, "auto_%s_%s" % (str(hex(product_id)), str(hex(device_id))))
-        self.router.add(address, ci)
+        self.router.add(ci)
 
         # Finally, forward the first message to the new device class instance
         if forward:
