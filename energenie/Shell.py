@@ -1,14 +1,13 @@
 from cmd import Cmd
-from energenie import Energenie
 
 
 class EnergenieShell(Cmd):
     prompt = " > "
     intro = "Interactive configuration press ? for help."
 
-    def __init__(self):
+    def __init__(self, energenie):
         super(EnergenieShell, self).__init__()
-        self.energenie = Energenie()
+        self.energenie = energenie
 
     def do_add(self, device_type, device_id):
         """

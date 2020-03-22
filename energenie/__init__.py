@@ -134,7 +134,8 @@ def main():
 
     args = parser.parse_args()
     if args.interactive:
-        Shell.EnergenieShell().cmdloop()
+        e = Energenie()
+        Shell.EnergenieShell(e).cmdloop()
 
     elif args.discover:
         e = Energenie()
