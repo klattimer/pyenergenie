@@ -42,6 +42,7 @@ class Energenie(threading.Thread):
         # #discovery_ask(ask)
         # discovery_autojoin()
         # #discovery_askjoin(ask)
+        self.discovery_auto()
 
     def __del__(self):
         self.stop()

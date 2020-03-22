@@ -55,7 +55,7 @@ class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
 
         # OOK receive not yet written
         # It will be used to be able to learn codes from Energenie legacy hand remotes
-        self.ook_router = None # Router("ook")
+        self.ook_router = None  # Router("ook")
         self.load_from(config_path)
 
     def set_fsk_router(self, fsk_router):
