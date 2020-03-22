@@ -110,13 +110,9 @@ class Energenie(threading.Thread):
 
     def ask(self, address, message):
         MSG = "Do you want to register to device: %s? " % str(address)
-        try:
-            if message is not None:
-                print(message)
-            y = raw_input(MSG)
-
-        except AttributeError:
-            y = input(MSG)
+        if message is not None:
+            print(message)
+        y = input(MSG)
 
         if y == "": return True
         y = y.upper()
