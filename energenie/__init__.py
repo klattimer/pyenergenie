@@ -25,7 +25,7 @@ ook_router = None
 
 class Energenie(threading.Thread):
     def __init__(self):
-        super()
+        super(Energenie, self).__init__()
         self.command_queue = Queue(maxsize=0)
         """Start the Energenie system running"""
 
