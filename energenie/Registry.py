@@ -75,6 +75,7 @@ class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
 
                 d = Devices.DeviceFactory.get_device_from_name(device_type, **device)
                 self.devices[device_name] = d
+                self.setup_device_routing(d)
 
     def load_into(self, context):
         """auto-create variables in the provided context, for all persisted registry entries"""
@@ -93,7 +94,10 @@ class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
     def get(self, name):  # -> Device
         """Get the description for a device class from the store, and construct a class instance"""
         c = self.devices[name]
+        # Check if device routing is enabled, turn it on if it is, and no address found
+        return c
 
+    def setup_device_routing(self, c):
         if self.fsk_router is not None:
             if c.can_send():  # if can transmit, we can receive from it
                 if isinstance(c, MiHomeDevice):
