@@ -51,9 +51,9 @@ class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
         # # print("***Opening DeviceRegistry")
         config_path = find_config()
         self.devices = {}
-        self.load_from(config_path)
         self.fsk_router = fsk_router
         self.ook_router = ook_router
+        self.load_from(config_path)
 
     def set_fsk_router(self, fsk_router):
         self.fsk_router = fsk_router
