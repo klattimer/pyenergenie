@@ -27,7 +27,7 @@ class Energenie(threading.Thread):
         radio.init()
         OpenThings.init(Devices.Device._crypt_pid)
 
-        self.registry = Registry.DeviceRegistry()
+        self.registry = Registry.DeviceRegistry.singleton()
         self.ask_fn = self.ask
 
         # registry.list()

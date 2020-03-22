@@ -57,6 +57,13 @@ def find_config(writable=False):
 
 class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
     """A persistent registry for device class instance configurations"""
+    _single = None
+
+    @classmethod
+    def singleton(cls):
+        if cls.__single is None:
+            cls.__single = cls()
+        return cls.__single
 
     def __init__(self):
         # # print("***Opening DeviceRegistry")
