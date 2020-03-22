@@ -207,7 +207,7 @@ class DeviceFactory:
 
     @classmethod
     def keys(cls):
-        cls.singleton().product_name_index.keys()
+        return cls.singleton().product_name_index.keys()
 
     @classmethod
     def get_device_from_name(cls, name, **kw_args):
