@@ -57,7 +57,7 @@ def init():
     global registry, fsk_router, ook_router
 
     radio.init()
-    OpenThings.init(Devices.CRYPT_PID)
+    OpenThings.init(Devices.Device._crypt_pid)
 
     fsk_router = Registry.Router("fsk")
 
@@ -164,12 +164,11 @@ def ask(address, message):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--interactive", help="Start interactive mode")
-    parser.add_argument("-d", "--discover", help="Start discovery mode")
-    parser.add_argument("-l", "--list", help="List devices and capabilities")
+    parser.add_argument("-i", "--interactive", action="store_true", help="Start interactive mode")
+    parser.add_argument("-d", "--discover", action="store_true", help="Start discovery mode")
+    parser.add_argument("-l", "--list", action="store_true", help="List devices and capabilities")
     parser.add_argument("-f", "--format", type=str, choices=['TERM', 'JSON', 'XML'], help="List devices and capabilities")
-    parser.add_argument("device", type=str, help="Select device")
-    parser.add_argument("command", type=str, help="Command to issue")
+    parser.add_argument("device", type=str, nargs=1, help="Select device")
 
     args = parser.parse_args()
     if args.interactive:
