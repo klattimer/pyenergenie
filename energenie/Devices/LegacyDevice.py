@@ -21,13 +21,6 @@ class LegacyDevice(EnergenieDevice):
     def __repr__(self):
         return "LegacyDevice(%s)" % str(self.device_id)
 
-    def get_config(self):
-        """Get the persistable config, enough to reconstruct this class from a factory"""
-        return {
-            "type": self.__class__.__name__,
-            "device_id": self.device_id
-        }
-
     def send_message(self, payload):
         if self.air_interface is not None:
             self.air_interface.send(payload, radio_config=self.radio_config)

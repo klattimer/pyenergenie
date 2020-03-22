@@ -41,15 +41,6 @@ class MiHomeDevice(EnergenieDevice):
         # self.config.encryptPID = CRYPT_PID
         # self.config.encryptPIP = CRYPT_PIP
 
-    def get_config(self):
-        """Get the persistable config, enough to reconstruct this class from a factory"""
-        return {
-            "type": self.__class__.__name__,
-            # "manufacturer_id": self.__class__._manufacturer_id,  # Redundant data
-            # "product_id": self.__class__._product_id, # Redundant data
-            "device_id": self.device_id
-        }
-
     def __repr__(self):
         return "MiHomeDevice(%s,%s,%s)" % (str(self.__class__._manufacturer_id), str(self.__class__._product_id), str(self.device_id))
 

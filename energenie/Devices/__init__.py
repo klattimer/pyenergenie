@@ -91,9 +91,6 @@ class Device():
         self.rxseq = 0
         self.lastHandledMessage = 0
 
-    def get_config(self):
-        raise RuntimeError("There is no configuration for a base Device")
-
     @staticmethod
     def parse_device_id(device_id):
         """device_id could be a number, a hex string or a decimal string"""
