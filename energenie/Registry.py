@@ -97,8 +97,8 @@ class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
         if self.fsk_router is not None:
             if c.can_send():  # if can transmit, we can receive from it
                 if isinstance(c, MiHomeDevice):
-                    # print("Adding rx route for transmit enabled device %s" % c)
                     address = (c._manufacturer_id, c._product_id, c.device_id)
+                    print("Adding rx route for transmit enabled device %s" % str(address))
                     self.fsk_router.add(address, c)
         return c
 
