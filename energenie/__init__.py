@@ -18,11 +18,6 @@ from . import OpenThings
 from . import Shell
 
 
-registry   = None
-fsk_router = None
-ook_router = None
-
-
 class Energenie(threading.Thread):
     def __init__(self):
         super(Energenie, self).__init__()
@@ -98,7 +93,7 @@ class Energenie(threading.Thread):
         self.fsk_router.when_unknown(None)
 
     def discovery_auto(self):
-        Registry.AutoDiscovery(registry)
+        Registry.AutoDiscovery(self.registry)
         # #print("Using auto discovery")
 
     def discovery_ask(self, ask_fn):
