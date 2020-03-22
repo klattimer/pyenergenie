@@ -35,8 +35,16 @@ class Device():
             "sensorid": 0
         }
 
+    def serialise(self):
+        return {
+            'type': self.__class__.__name__,
+            'device_id': self.device_id,
+            'name': self.name,
+            'enabled': self.enabled
+        }
+
     """A generic connected device abstraction"""
-    def __init__(self, name=None, device_id=None):
+    def __init__(self, name=None, device_id=None, enabled=True):
         if type(self.__class__._product_rf) == str:
             if self.__class__._product_rf.startswith('FSK'):
                 self.air_interface = DeviceFactory.fsk_interface
@@ -47,6 +55,7 @@ class Device():
                 self.air_interface = None
         self.device_id = self.parse_device_id(device_id)
         self.name = name
+        self.enabled = True
 
         class RadioConfig(): pass
         self.radio_config = RadioConfig()

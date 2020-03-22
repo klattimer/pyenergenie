@@ -10,8 +10,8 @@ class MIHO033(MiHomeDevice):
     _product_url = "https://energenie4u.co.uk/catalogue/product/MIHO033"
 
     """An Energenie Open Sensor"""
-    def __init__(self, name=None, device_id=None):
-        MiHomeDevice.__init__(self, name, device_id)
+    def __init__(self, name=None, device_id=None, enabled=True):
+        MiHomeDevice.__init__(self, name, device_id, enabled)
 
         class Readings():
             switch_state = None

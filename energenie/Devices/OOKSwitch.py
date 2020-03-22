@@ -6,8 +6,8 @@ class OOKSwitch(LegacyDevice):
     _product_rf = "OOK()"
 
     """Any OOK controlled switch"""
-    def __init__(self, name=None, device_id=None):
-        LegacyDevice.__init__(self, name, device_id)
+    def __init__(self, name=None, device_id=None, enabled=True):
+        LegacyDevice.__init__(self, name, device_id, enabled)
         self.radio_config.inner_times = 8
         self.capabilities.switch = True
         self.capabilities.receive = True

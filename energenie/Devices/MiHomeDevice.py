@@ -29,8 +29,8 @@ class MiHomeDevice(EnergenieDevice):
     _product_rf = "FSK()"
 
     """An abstraction for Energenie new style MiHome FSK devices"""
-    def __init__(self, name=None, device_id=None):
-        EnergenieDevice.__init__(self, name, device_id)
+    def __init__(self, name=None, device_id=None, enabled=True):
+        EnergenieDevice.__init__(self, name, device_id, enabled)
         # TODO: These are now implied by the air_interface adaptor
         # self.radio_config.frequency  = 433.92
         # self.radio_config.modulation = "FSK"

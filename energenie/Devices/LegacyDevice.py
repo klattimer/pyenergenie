@@ -5,7 +5,7 @@ class LegacyDevice(EnergenieDevice):
     DEFAULT_HOUSE_ADDRESS = 0x6C6C6
 
     """An abstraction for Energenie green button legacy OOK devices"""
-    def __init__(self, name=None, device_id=None):
+    def __init__(self, name=None, device_id=None, enabled=True):
         if device_id is None:
             device_id = (LegacyDevice.DEFAULT_HOUSE_ADDRESS, 1)
         elif type(device_id) == int:
@@ -13,7 +13,7 @@ class LegacyDevice(EnergenieDevice):
         elif type(device_id) == tuple and device_id[0] is None:
             device_id = (LegacyDevice.DEFAULT_HOUSE_ADDRESS, device_id[1])
 
-        EnergenieDevice.__init__(self, name, device_id)
+        EnergenieDevice.__init__(self, name, device_id, enabled)
         # TODO: These are now just be implied by the ook_interface adaptor
         # self.radio_config.frequency  = 433.92
         # self.radio_config.modulation = "OOK"

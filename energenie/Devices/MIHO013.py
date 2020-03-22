@@ -81,8 +81,8 @@ class MIHO013(MiHomeDevice):
     _product_url = "https://energenie4u.co.uk/catalogue/product/MIHO013"
 
     """An Energenie MiHome eTRV Radiator Valve"""
-    def __init__(self, name=None, device_id=None):
-        MiHomeDevice.__init__(self, name, device_id)
+    def __init__(self, name=None, device_id=None, enabled=True):
+        MiHomeDevice.__init__(self, name, device_id, enabled)
 
         class Readings():
             battery_voltage      = None
@@ -95,6 +95,7 @@ class MIHO013(MiHomeDevice):
 
         self.radio_config.inner_times = 4
         self.capabilities.send = True
+        self.capabilities.switch = True
         self.capabilities.receive = True
         self.send_queue = []
         self.lastVoltageReading = None
@@ -117,15 +118,15 @@ class MIHO013(MiHomeDevice):
         if len(self.send_queue) > 0:
             message = self.send_queue.pop(0)
             self.send_message(message)
-            print ("MIHO013 send %s (%s)" % (self.device_id, len(self.send_queue)))
-            print("Sent message %s" % str(message))
+            # print ("MIHO013 send %s (%s)" % (self.device_id, len(self.send_queue)))
+            # print("Sent message %s" % str(message))
 
         # extract data from message
         for rec in payload["recs"]:
             paramid = rec["paramid"]
             if "value" in rec:
                 value = rec["value"]
-                print("MIHO013 new data %s %s %s" % (self.device_id, OpenThings.paramid_to_paramname(paramid), value))
+                # print("MIHO013 new data %s %s %s" % (self.device_id, OpenThings.paramid_to_paramname(paramid), value))
                 if paramid == OpenThings.PARAM_TEMPERATURE:
                     self.readings.ambient_temperature = value
                 if paramid == OpenThings.PARAM_VOLTAGE:
@@ -139,7 +140,7 @@ class MIHO013(MiHomeDevice):
             header_sensorid=self.device_id,
             header_encryptPIP=int(random.randrange(0xFFFF))
         )
-        print("Queuing message %s " % str(message))
+        # print("Queuing message %s " % str(message))
         self.send_queue.append(copy.copy(message))
 
     def get_battery_voltage(self):  # ->voltage:float
