@@ -98,7 +98,7 @@ class Energenie(threading.Thread):
         self.fsk_router.when_unknown(None)
 
     def discovery_auto(self):
-        Registry.AutoDiscovery(registry, fsk_router)
+        Registry.AutoDiscovery(registry)
         # #print("Using auto discovery")
 
     def discovery_ask(self, ask_fn):
