@@ -106,11 +106,11 @@ class MIHO013(MiHomeDevice):
         # check if it's time to refresh readings
         now = time.time()
         if self.voltageReadingPeriod is not None and (self.lastVoltageReading is None or now - self.lastVoltageReading > self.voltageReadingPeriod):
-            self.queue_message(OpenThings.Message(MIHO013_BATTERY_LEVEL, header=self.__class_.header()))
+            self.queue_message(OpenThings.Message(MIHO013_BATTERY_LEVEL, header=self.__class__.header()))
             self.lastVoltageReading = now
 
         if self.diagnosticsReadingPeriod is not None and (self.lastDiagnosticsReading is None or now - self.lastDiagnosticsReading > self.diagnosticsReadingPeriod):
-            self.queue_message(OpenThings.Message(MIHO013_DIAGNOSTICS, header=self.__class_.header()))
+            self.queue_message(OpenThings.Message(MIHO013_DIAGNOSTICS, header=self.__class__.header()))
             self.lastDiagnosticsReading = now
 
         # send a message whilst receive window is open
