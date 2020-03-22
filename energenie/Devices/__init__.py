@@ -248,9 +248,7 @@ class DeviceFactory:
                 print ("Plugin failed to load, no such class \"%s\"" % m)
 
             self.product_id_index[plugin._product_id] = plugin
-            self.product_name_index[plugin._product_name] = plugin
-
-            print(self.product_name_index.keys())
+            self.product_name_index[m] = plugin
 
         # Load class named the same as filename ONLY, we want strong device
         # separation in the drivers, so regardless of minimum implementation
