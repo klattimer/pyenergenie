@@ -10,8 +10,8 @@ class MIHO006(MiHomeDevice):
     _product_url = "https://energenie4u.co.uk/catalogue/product/MIHO006"
 
     """An Energenie MiHome Home Monitor"""
-    def __init__(self, name=None, device_id=None, enabled=True):
-        MiHomeDevice.__init__(self, name, device_id, enabled)
+    def __init__(self, **kw_args):
+        MiHomeDevice.__init__(self, **kw_args)
 
         class Readings():
             battery_voltage = None

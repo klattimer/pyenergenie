@@ -10,8 +10,8 @@ class MIHO004(MiHomeDevice):
     _product_url = "https://energenie4u.co.uk/catalogue/product/MIHO004"
 
     """Energenie Monitor-only Adaptor"""
-    def __init__(self, name=None, device_id=None, enabled=True):
-        MiHomeDevice.__init__(self, name, device_id, enabled)
+    def __init__(self, **kw_args):
+        MiHomeDevice.__init__(self, **kw_args)
 
         class Readings():
             voltage        = None

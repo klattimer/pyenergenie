@@ -23,7 +23,9 @@ class Device():
             'type': cls.__name__,
             'id': cls._product_id,
             'name': cls._product_name,
-            'rf': cls._product_rf
+            'description': cls._product_description,
+            'rf': cls._product_rf,
+            'url': cls._product_url
         }
 
     @classmethod

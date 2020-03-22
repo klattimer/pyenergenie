@@ -3,8 +3,8 @@ from energenie.Devices.LegacyDevice import LegacyDevice
 
 class MiHomeLight(LegacyDevice):
     """Base for all MiHomeLight variants. Receive only OOK device"""
-    def __init__(self, name=None, device_id=None, enabled=True):
-        LegacyDevice.__init__(self, name, device_id, enabled=True)
+    def __init__(self, **kw_args):
+        LegacyDevice.__init__(self, **kw_args)
         self.radio_config.inner_times = 75
         self.capabilities.switch = True
         self.capabilities.receive = True
