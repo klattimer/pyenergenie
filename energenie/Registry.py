@@ -69,6 +69,7 @@ class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
                 device_name = device['name']
 
                 del device['type']
+                del device['name']
                 del device['enabled']
 
                 d = Devices.DeviceFactory.get_device_from_name(device_type, **device)
