@@ -356,7 +356,7 @@ class JoinAutoDiscovery(Discovery):
         Discovery.__init__(self, registry)
 
     def unknown_device(self, address, message):
-        # #print("unknown device auto join %s" % str(address))
+        print("unknown device auto join %s\n%s" % (str(address), str(message)))
 
         # TODO: need to make this work with correct meta methods
         # #if not OpenThings.PARAM_JOIN in message:
