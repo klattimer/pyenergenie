@@ -365,6 +365,10 @@ class JoinAutoDiscovery(Discovery):
         except KeyError:
             j = None
 
+        # TODO: FIXME: Hack to bypass and send acknowledge for unknown valves
+        if address[1] == 3:
+            j = True
+
         if j is None:  # not a join
             Discovery.unknown_device(self, address, message)
         else:  # it is a join
