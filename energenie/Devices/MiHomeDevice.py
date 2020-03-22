@@ -69,7 +69,7 @@ class MiHomeDevice(EnergenieDevice):
         # msg[OpenThings.PARAM_JOIN] = {"wr":False, "typeid":OpenThings.Value.UINT, "length":0}
         # self.send_message(msg)
 
-        payload = OpenThings.Message(JOIN_ACK, self.__class__.header())
+        payload = OpenThings.Message(JOIN_ACK, header=self.__class__.header())
         payload.set(header_productid=self.__class__._product_id,
                     header_sensorid=self.device_id)
         self.send_message(payload)
