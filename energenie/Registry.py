@@ -7,6 +7,7 @@
 import os
 import json
 
+from copy import copy
 from . import Devices
 from energenie.Devices.MiHomeDevice import MiHomeDevice
 from . import OpenThings
@@ -15,29 +16,39 @@ from . import OpenThings
 search_config = [
     "/etc/pyenergenie/config.json",
     "/opt/venvs/pyenergenie/config/config.json",
+    "~/.pyenergenie/config.json",
+
+    # This is for testing only
     "data/config.json"
 ]
 
 
-def find_config():
-    w = None
-    for f in search_config:
+def find_config(writable=False):
+    # We check for writable paths in reverse, so user paths can over-ride
+    # system wide paths. Strictly this isn't necessary because only root
+    # can run this...
+    if writable is True:
+        paths = copy(search_config)
+        paths.reverse()
+    else:
+        paths = copy(search_config)
+
+    for f in paths:
         f = os.path.expanduser(f)
         f = os.path.abspath(f)
+        if os.path.exists(f):
+            if writable is False:
+                return f
+
         d = os.path.dirname(f)
         if os.path.exists(d):
-            if os.access(d, os.W_OK):
-                w = f
-            if os.path.exists(f):
-                if os.access(f, os.W_OK):
-                    return f
-        elif os.access(os.path.dirname(d), os.W_OK):
+            if writable is True and os.access(d, os.W_OK):
+                return f
+        elif writable is True and os.access(os.path.dirname(d), os.W_OK):
             os.makedirs(d)
-            w = f
-    if w is None:
-        print ("Cannot find suitable config path to write, create one in %s" % ' or '.join(search_config))
-        raise Exception("No config file")
-    return w
+            return f
+    print ("Cannot find suitable config path to write, create one in %s" % ' or '.join(search_config))
+    raise Exception("No config file")
 
 
 # ----- NEW DEVICE REGISTRY ----------------------------------------------------
@@ -56,6 +67,7 @@ class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
         # OOK receive not yet written
         # It will be used to be able to learn codes from Energenie legacy hand remotes
         self.ook_router = None  # Router("ook")
+        self.config = {}
         self.load_from(config_path)
 
     def set_fsk_router(self, fsk_router):
@@ -64,21 +76,31 @@ class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
     def load_from(self, filename=None):
         """Start with a blank in memory registry, and load from the given filename"""
         with open(filename) as f:
-            config = json.loads(f.read())
-            for device in config['devices']:
-                if device['enabled'] is not True:
-                    continue
+            self.config = json.loads(f.read())
+            for device in self.config['devices']:
 
                 device_type = device['type']
                 device_name = device['name']
 
                 del device['type']
                 del device['name']
-                del device['enabled']
 
                 d = Devices.DeviceFactory.get_device_from_name(device_type, **device)
                 self.devices[device_name] = d
+                # TODO: Add enable/disable methods
+                if device['enabled'] is not True:
+                    continue
                 self.setup_device_routing(d)
+
+    def update_config(self):
+        devices = []
+        for device in self.devices.values():
+            devices.append(device.serialise())
+        self.config['devices'] = devices
+        config_path = find_config(True)
+        with open(config_path, 'wt') as f:
+            f.write(json.dumps(self.config, indent=4, sort_keys=True))
+        print('Saved configuration in %s' % config_path)
 
     def load_into(self, context):
         """auto-create variables in the provided context, for all persisted registry entries"""
@@ -349,6 +371,7 @@ class JoinAutoDiscovery(Discovery):
             # but don't forward the join request as it will be malformed with no value
             ci = self.accept_device(address, message, forward=False)
             ci.join_ack()  # Ask new class instance to send a join_ack back to physical device
+            print ("Acknowledged new device %s" % str(address))
 
 
 class JoinConfirmedDiscovery(Discovery):

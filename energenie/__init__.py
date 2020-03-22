@@ -38,7 +38,7 @@ class Energenie(threading.Thread):
         # #discovery_ask(ask)
         # discovery_autojoin()
         # #discovery_askjoin(ask)
-        self.discovery_auto()
+        # self.discovery_auto()
 
     def __del__(self):
         self.stop()
@@ -96,7 +96,7 @@ class Energenie(threading.Thread):
         Registry.AutoDiscovery(self.registry)
         # #print("Using auto discovery")
 
-    def discovery_ask(self, ask_fn):
+    def discovery_ask(self):
         Registry.ConfirmedDiscovery(self.registry, self.ask_fn)
         # #print("using confirmed discovery")
 
@@ -104,8 +104,8 @@ class Energenie(threading.Thread):
         Registry.JoinAutoDiscovery(self.registry)
         # #print("using auto join discovery")
 
-    def discovery_askjoin(self, ask_fn):
-        Registry.JoinConfirmedDiscovery(self.registry, ask_fn)
+    def discovery_askjoin(self):
+        Registry.JoinConfirmedDiscovery(self.registry, self.ask_fn)
         # #print("using confirmed join discovery")
 
     def ask(self, address, message):
@@ -137,8 +137,15 @@ def main():
         Shell.EnergenieShell().cmdloop()
 
     elif args.discover:
-        pass
-
+        e = Energenie()
+        e.discovery_autojoin()
+        e.start()
+        try:
+            while True:
+                time.sleep(10)
+        except KeyboardInterrupt:
+            print('interrupted!')
+        e.registry.update_config()
 
 if __name__ == '__main__':
     main()

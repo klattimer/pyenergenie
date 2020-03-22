@@ -31,7 +31,7 @@ So I'm basically rewriting the project and heres a quick list of what needs to b
 - Mode that runs as a daemon, the daemon simply captures the events and sends
   signals based on MQTT paths
 - Mode which dumps live JSON representation of the signal received
-- 
+-
 
 ## Wishlist
 
