@@ -9,7 +9,7 @@ class LegacyDevice(EnergenieDevice):
         if 'device_id' not in kw_args.keys() or kw_args['device_id'] is None:
             kw_args['device_id'] = (LegacyDevice.DEFAULT_HOUSE_ADDRESS, 1)
         elif type(kw_args['device_id']) == int:
-            kw_args['device_id'] = (LegacyDevice.DEFAULT_HOUSE_ADDRESS, device_id)
+            kw_args['device_id'] = (LegacyDevice.DEFAULT_HOUSE_ADDRESS, kw_args['device_id'])
         elif type(kw_args['device_id']) == tuple and kw_args['device_id'][0] is None:
             kw_args['device_id'] = (LegacyDevice.DEFAULT_HOUSE_ADDRESS, kw_args['device_id'][1])
         EnergenieDevice.__init__(self, **kw_args)

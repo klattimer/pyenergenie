@@ -3,6 +3,7 @@ from .. import OnAir
 import os
 import importlib
 import time
+from uuid import uuid4
 
 
 class Device():
@@ -42,11 +43,12 @@ class Device():
             'type': self.__class__.__name__,
             'device_id': self.device_id,
             'name': self.name,
-            'enabled': self.enabled
+            'enabled': self.enabled,
+            'uuid': self.uuid
         }
 
     """A generic connected device abstraction"""
-    def __init__(self, name=None, device_id=None, enabled=True):
+    def __init__(self, name=None, device_id=None, enabled=True, uuid=None):
         if type(self.__class__._product_rf) == str:
             if self.__class__._product_rf.startswith('FSK'):
                 self.air_interface = DeviceFactory.fsk_interface
@@ -58,6 +60,9 @@ class Device():
         self.device_id = self.parse_device_id(device_id)
         self.name = name
         self.enabled = True
+        if uuid is None:
+            uuid = str(uuid4())
+        self.uuid = uuid
 
         class RadioConfig(): pass
         self.radio_config = RadioConfig()
