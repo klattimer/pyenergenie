@@ -155,9 +155,7 @@ class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
 
     def list(self):
         """List the registry in a vaguely printable format, mostly for debug"""
-        print("REGISTERED DEVICES:")
-        return [k for k in self.devices.keys()]:
-            print("  %s -> %s" % (k, self.devices[k]))
+        return [k for k in self.devices.keys()]
 
     def size(self):
         """How many entries are there in the registry?"""
