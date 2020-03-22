@@ -10,7 +10,7 @@ import time
 import os
 import argparse
 import threading
-from Queue import Queue
+from queue import Queue
 
 from . import radio
 from . import Devices
