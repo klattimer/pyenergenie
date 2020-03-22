@@ -7,7 +7,7 @@ PYENERGENIE_DOWNLOAD_URL = (
 
 setup(
     name='pyenergenie',
-    packages=['energenie'],
+    packages=setuptools.find_packages(),
     version=PYENERGENIE_VERSION,
     description='Energinie interface in python.',
     long_description='',
