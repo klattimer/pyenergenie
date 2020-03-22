@@ -117,14 +117,14 @@ class MIHO013(MiHomeDevice):
         if len(self.send_queue) > 0:
             message = self.send_queue.pop(0)
             self.send_message(message)
-            # print ("MIHO013 send %s (%s)" % (self.device_id, len(self.send_queue)))
+            print ("MIHO013 send %s (%s)" % (self.device_id, len(self.send_queue)))
 
         # extract data from message
         for rec in payload["recs"]:
             paramid = rec["paramid"]
             if "value" in rec:
                 value = rec["value"]
-                # print("MIHO013 new data %s %s %s" % (self.device_id, OpenThings.paramid_to_paramname(paramid), value))
+                print("MIHO013 new data %s %s %s" % (self.device_id, OpenThings.paramid_to_paramname(paramid), value))
                 if paramid == OpenThings.PARAM_TEMPERATURE:
                     self.readings.ambient_temperature = value
                 if paramid == OpenThings.PARAM_VOLTAGE:
