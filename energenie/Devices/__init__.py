@@ -242,6 +242,17 @@ class DeviceFactory:
     def keys(cls):
         return cls.singleton().product_name_index.keys()
 
+    def __getitem__(self, key):
+        try:
+            key = int(key)
+        except Exception:
+            pass
+
+        if type(key) == int:
+            return self.product_id_index[key]
+
+        return self.product_name_index[key]
+
     @classmethod
     def get_device_from_name(cls, name, **kw_args):
         if name not in cls.keys():
