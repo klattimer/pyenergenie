@@ -51,7 +51,7 @@ class MiHomeDevice(EnergenieDevice):
         }
 
     def __repr__(self):
-        return "MiHomeDevice(%s,%s,%s)" % (str(self.__class__.__manufacturer_id), str(self.__class__.__product_id), str(self.device_id))
+        return "MiHomeDevice(%s,%s,%s)" % (str(self.__class__._manufacturer_id), str(self.__class__._product_id), str(self.device_id))
 
     @classmethod
     def get_join_req(cls, mfrid, productid, deviceid):
