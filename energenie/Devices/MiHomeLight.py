@@ -1,4 +1,4 @@
-from Devices.LegacyDevice import LegacyDevice
+from energenie.Devices.LegacyDevice import LegacyDevice
 
 
 class MiHomeLight(LegacyDevice):

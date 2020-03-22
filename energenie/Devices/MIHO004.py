@@ -1,5 +1,5 @@
-from Devices.MiHomeDevice import MiHomeDevice
-import OpenThings
+from energenie.Devices.MiHomeDevice import MiHomeDevice
+import energenie.OpenThings as OpenThings
 
 
 class MIHO004(MiHomeDevice):

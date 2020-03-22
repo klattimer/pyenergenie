@@ -53,7 +53,6 @@ class Energenie(threading.Thread):
         # #discovery_askjoin(ask)
 
     def __del__(self):
-        super().__del__()
         self.stop()
 
     def loop(self, receive_time=1):

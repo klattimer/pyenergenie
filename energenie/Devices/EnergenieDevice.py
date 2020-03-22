@@ -1,4 +1,4 @@
-from Devices import Device
+from energenie.Devices import Device
 
 
 class EnergenieDevice(Device):

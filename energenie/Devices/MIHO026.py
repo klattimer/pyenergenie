@@ -1,4 +1,4 @@
-from Devices.MiHomeLight import MiHomeLight
+from energenie.Devices.MiHomeLight import MiHomeLight
 
 
 class MIHO026(MiHomeLight):

@@ -1,4 +1,4 @@
-from Devices.EnergenieDevice import EnergenieDevice
+from energenie.Devices.EnergenieDevice import EnergenieDevice
 
 
 class LegacyDevice(EnergenieDevice):

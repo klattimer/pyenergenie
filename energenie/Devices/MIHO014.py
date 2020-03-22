@@ -1,4 +1,4 @@
-from Devices.OOKSwitch import OOKSwitch
+from energenie.Devices.OOKSwitch import OOKSwitch
 
 
 class MIHO014(OOKSwitch):

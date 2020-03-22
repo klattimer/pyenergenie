@@ -1,5 +1,5 @@
-from Devices.EnergenieDevice import EnergenieDevice
-import OpenThings
+from energenie.Devices.EnergenieDevice import EnergenieDevice
+import energenie.OpenThings as OpenThings
 
 
 JOIN_REQ = {
