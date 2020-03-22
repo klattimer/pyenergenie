@@ -240,7 +240,7 @@ class DeviceFactory:
 
             print(f)
             m = f.replace('.py', '')
-            module = importlib.import_module('.' + m, '.Devices')
+            module = importlib.import_module('.' + m)
             try:
                 plugin = getattr(module, m)
             except:
