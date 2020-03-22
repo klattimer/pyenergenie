@@ -23,9 +23,39 @@
     ],
     "devices": [
         {
-            "name": "Bedroom Radiator",
+            "name": "Master Bedroom eTRV",
             "type": "MIHO013",
             "device_id": 3627,
+            "enabled": True
+        },
+        {
+            "name": "Second Bedroom eTRV",
+            "type": "MIHO013",
+            "device_id": 7228,
+            "enabled": True
+        },
+        {
+            "name": "Living Room eTRV",
+            "type": "MIHO013",
+            "device_id": 6906,
+            "enabled": True
+        },
+        {
+            "name": "Dining Room eTRV",
+            "type": "MIHO013",
+            "device_id": 3942,
+            "enabled": True
+        },
+        {
+            "name": "Hallway eTRV",
+            "type": "MIHO013",
+            "device_id": 6969,
+            "enabled": True
+        },
+        {
+            "name": "Bathroom eTRV",
+            "type": "MIHO013",
+            "device_id": 6898,
             "enabled": True
         }
     ]

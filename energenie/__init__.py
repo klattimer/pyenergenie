@@ -8,16 +8,47 @@
 
 import time
 import os
+import argparse
+import threading
+from Queue import Queue
 
 from . import radio
 from . import Devices
 from . import Registry
 from . import OpenThings
+from . import Shell
 
 
 registry   = None
 fsk_router = None
 ook_router = None
+
+
+class Energenie(threading.Thread):
+    def __init__(self):
+        super()
+        self.command_queue = Queue(maxsize=0)
+        init()
+
+    def __del__(self):
+        super().__del__()
+        finished()
+
+    def loop(self):
+        loop()
+
+    def start(self):
+        self.running = True
+        super().start()
+
+    def run(self):
+        while self.running is True:
+            self.loop()
+
+            # Process the command queue
+
+    def stop(self):
+        self.running = False
 
 
 def init():
@@ -48,7 +79,7 @@ def init():
     # #discovery_none()
     # #discovery_auto()
     # #discovery_ask(ask)
-    discovery_autojoin()
+    # discovery_autojoin()
     # #discovery_askjoin(ask)
 
 
@@ -132,13 +163,21 @@ def ask(address, message):
 # END
 
 def main():
-    # parse args
-    #
-    # -d - start discovery mode
-    # -s DEVICEID.
-    # -i - start interactive mode
-    #
-    pass
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-i", "--interactive", help="Start interactive mode")
+    parser.add_argument("-d", "--discover", help="Start discovery mode")
+    parser.add_argument("-l", "--list", help="List devices and capabilities")
+    parser.add_argument("-f", "--format", type=str, choices=['TERM', 'JSON', 'XML'], help="List devices and capabilities")
+    parser.add_argument("device", type=str, help="Select device")
+    parser.add_argument("command", type=str, help="Command to issue")
+
+    args = parser.parse_args()
+    if args.interactive:
+        Shell.EnergenieShell().cmdloop()
+
+    elif args.discover:
+        pass
+
 
 if __name__ == '__main__':
     main()
