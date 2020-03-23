@@ -5,6 +5,7 @@ import os
 import importlib
 import time
 from uuid import uuid4
+import logging
 
 
 class Device():
@@ -94,7 +95,7 @@ class Device():
     @staticmethod
     def parse_device_id(device_id):
         """device_id could be a number, a hex string or a decimal string"""
-        # print("**** parsing: %s" % str(device_id))
+        logging.debug("**** parsing: %s" % str(device_id))
         if device_id is None:
             raise ValueError("device_id is None, not allowed")
 
@@ -209,10 +210,10 @@ class Device():
 
     def handle_message(self, payload):
         """Default handling for a new message"""
-        print("incoming(unhandled): %s" % payload)
+        logging.warning("incoming(unhandled): %s" % payload)
 
     def send_message(self, payload):
-        print("send_message %s" % payload)
+        logging.warning("send_message %s" % payload)
         # A raw device has no knowledge of how to send, the sub class provides that.
 
     def when_updated(self, callback):
@@ -274,15 +275,12 @@ class DeviceFactory:
         for f in files:
             if f.startswith("__"): continue
             if not f.endswith(".py"): continue
-
-            print(f)
             m = f.replace('.py', '')
             module = importlib.import_module('.' + m, 'energenie.Devices')
             try:
                 plugin = getattr(module, m)
             except:
-                # logging.exception...
-                print ("Plugin failed to load, no such class \"%s\"" % m)
+                logging.exception("Plugin failed to load, no such class \"%s\"" % m)
 
             self.product_id_index[plugin._product_id] = plugin
             self.product_name_index[m] = plugin

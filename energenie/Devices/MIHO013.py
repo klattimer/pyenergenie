@@ -3,6 +3,7 @@ import energenie.OpenThings as OpenThings
 import random
 import copy
 import time
+import logging
 
 MIHO013_IDENTIFY = {
     "recs": [
@@ -118,15 +119,15 @@ class MIHO013(MiHomeDevice):
         if len(self.send_queue) > 0:
             message = self.send_queue.pop(0)
             self.send_message(message)
-            # print ("MIHO013 send %s (%s)" % (self.device_id, len(self.send_queue)))
-            # print("Sent message %s" % str(message))
+            logging.debug("MIHO013 send %s (%s)" % (self.device_id, len(self.send_queue)))
+            logging.debug("Sent message %s" % str(message))
 
         # extract data from message
         for rec in payload["recs"]:
             paramid = rec["paramid"]
             if "value" in rec:
                 value = rec["value"]
-                # print("MIHO013 new data %s %s %s" % (self.device_id, OpenThings.paramid_to_paramname(paramid), value))
+                logging.debug("MIHO013 new data %s %s %s" % (self.device_id, OpenThings.paramid_to_paramname(paramid), value))
                 if paramid == OpenThings.PARAM_TEMPERATURE:
                     self.readings.ambient_temperature = value
                 if paramid == OpenThings.PARAM_VOLTAGE:
@@ -140,7 +141,7 @@ class MIHO013(MiHomeDevice):
             header_sensorid=self.device_id,
             header_encryptPIP=int(random.randrange(0xFFFF))
         )
-        # print("Queuing message %s " % str(message))
+        logging.debug("Queuing message %s " % str(message))
         self.send_queue.append(copy.copy(message))
 
     def get_battery_voltage(self):  # ->voltage:float
