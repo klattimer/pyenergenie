@@ -3,7 +3,9 @@ from .. import OnAir
 from .. import Registry
 import os
 import importlib
+import inspect
 import time
+from collections import defaultdict
 from uuid import uuid4
 import logging
 
@@ -37,6 +39,52 @@ class Device():
         self._enabled = value
 
     @classmethod
+    def features(cls):
+        """
+        Extract the features provided by this class
+        """
+        # Capabilities and Readings aren't exported by the class,
+        # they're settings on the instance itself, so we collect up
+        # a detailed spec from the function's available.
+        #
+        # This requires some specification, all features must have a get or set
+        # method
+        #
+        # e.g. set_switch(enabled: bool) -> None:
+        #      get_switch() -> bool:
+        #
+        # Constricting the method naming like this is necessary to provide a
+        # list of supported features.
+        #
+        keys = cls.__dict__.keys()
+        features = defaultdict(dict)
+
+        for k in keys:
+            # Check if it's not a function, continue
+            if type(cls.__dict__[k]).__name__ != 'function':
+                continue
+
+            if not k.startswith("get_") and not k.startswith("set_"):
+                continue
+
+            # Get the function description, arguments, return etc...
+            argspec = inspect.getfullargspec(cls.__dict__[k])
+
+            def convarg(arg):
+                t = argspec.annotations[arg]
+                ret = {'arg': arg, 'type': t.__name__}
+                p = argspec.args.index(arg) - len(argspec.defaults)
+                if p >= 0: ret['default'] = argspec.defaults[p]
+                return ret
+
+            features[k[4:]][k[0:3]] = {
+                'method': k,
+                'args': [convarg(arg) for arg in argspec.args if arg != 'self'],
+                'return': argspec.annotations['return'].__name__
+            }
+        return features
+
+    @classmethod
     def describe(cls):
         return {
             'type': cls.__name__,
@@ -44,7 +92,8 @@ class Device():
             'name': cls._product_name,
             'description': cls._product_description,
             'rf': cls._product_rf,
-            'url': cls._product_url
+            'url': cls._product_url,
+            'features': cls.features()
         }
 
     @classmethod
@@ -52,9 +101,13 @@ class Device():
         return {
             "mfrid": cls._manufacturer_id,
             "productid": cls._product_id,
-            "encryptPIP": cls._crypt_pid,
+            "encryptPIP": cls._crypt_pip,
             "sensorid": 0
         }
+
+    @classmethod
+    def can_send(cls):
+        return cls._product_rf.contains('tx')
 
     def serialise(self):
         return {
@@ -144,18 +197,6 @@ class Device():
         else:
             raise ValueError("device_id unsupported type or format, got: %s %s" % (type(device_id), str(device_id)))
 
-    def has_switch(self):
-        return hasattr(self.capabilities, "switch")
-
-    def can_send(self):
-        return hasattr(self.capabilities, "send")
-
-    def can_receive(self):
-        return hasattr(self.capabilities, "receive")
-
-    def get_radio_config(self):
-        return self.radio_config
-
     def get_last_receive_time(self):  # ->timestamp
         """The timestamp of the last time any message was received by this device"""
         return self.last_receive_time
@@ -163,38 +204,6 @@ class Device():
     def get_next_receive_time(self):  # -> timestamp
         """An estimate of the next time we expect a message from this device"""
         pass
-
-    def get_readings_summary(self):
-        """Try to get a terse summary of all present readings"""
-
-        try:
-            r = self.readings
-        except AttributeError:
-            return "(no readings)"
-
-        if r is None:
-            return "(no readings)"
-
-        def shortname(name):
-            parts = name.split('_')
-            sn = ""
-            for p in parts:
-                sn += p[0].upper()
-            return sn
-
-        line = ""
-        for rname in dir(self.readings):
-            if not rname.startswith("__"):
-                value = getattr(self.readings, rname)
-                line += "%s:%s " % (shortname(rname), str(value))
-
-        return line
-
-        # for each reading
-        #   call get_x to get the reading
-        #   think of a very short name, perhaps first letter of reading name?
-        #   add it to a terse string
-        # return the string
 
     def get_receive_count(self):
         return self.rxseq

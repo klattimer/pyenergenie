@@ -297,7 +297,8 @@ def encode(spec, encrypt=True):
     else:
         encryptPIP = header["encryptPIP"]
 
-    encryptPIP = 0x6d49
+    # This appears to break the join req
+    # encryptPIP = 0x6d49
 
     payload.append((encryptPIP & 0xFF00) >> 8)  # MSB
     payload.append((encryptPIP & 0xFF))         # LSB

@@ -95,9 +95,7 @@ class MIHO013(MiHomeDevice):
         self.readings = Readings()
 
         self.radio_config.inner_times = 4
-        self.capabilities.send = True
-        self.capabilities.switch = True
-        self.capabilities.receive = True
+        self.radio_config.outer_times = 4
         self.send_queue = []
         self.lastVoltageReading = None
         self.lastDiagnosticsReading = None
@@ -105,6 +103,13 @@ class MIHO013(MiHomeDevice):
         self.diagnosticsReadingPeriod = 3600
 
     def handle_message(self, payload):
+        # send a message whilst receive window is open, this MUST be done first
+        if len(self.send_queue) > 0:
+            message = self.send_queue.pop(0)
+            self.send_message(message)
+            logging.debug("MIHO013 send %s (%s)" % (self.device_id, len(self.send_queue)))
+            logging.debug("Sent message %s" % str(message))
+
         # check if it's time to refresh readings
         now = time.time()
         if self.voltageReadingPeriod is not None and (self.lastVoltageReading is None or now - self.lastVoltageReading > self.voltageReadingPeriod):
@@ -114,13 +119,6 @@ class MIHO013(MiHomeDevice):
         if self.diagnosticsReadingPeriod is not None and (self.lastDiagnosticsReading is None or now - self.lastDiagnosticsReading > self.diagnosticsReadingPeriod):
             self.queue_message(OpenThings.Message(MIHO013_DIAGNOSTICS, header=self.__class__.header()))
             self.lastDiagnosticsReading = now
-
-        # send a message whilst receive window is open
-        if len(self.send_queue) > 0:
-            message = self.send_queue.pop(0)
-            self.send_message(message)
-            logging.debug("MIHO013 send %s (%s)" % (self.device_id, len(self.send_queue)))
-            logging.debug("Sent message %s" % str(message))
 
         # extract data from message
         for rec in payload["recs"]:
@@ -144,19 +142,19 @@ class MIHO013(MiHomeDevice):
         logging.debug("Queuing message %s " % str(message))
         self.send_queue.append(copy.copy(message))
 
-    def get_battery_voltage(self):  # ->voltage:float
+    def get_battery_voltage(self) -> float:  # ->voltage:float
         return self.readings.battery_voltage
 
-    def get_ambient_temperature(self):  # -> temperature:float
+    def get_ambient_temperature(self) -> float:  # -> temperature:float
         return self.readings.ambient_temperature
 
     def get_diagnostics(self):
         return self.readings.diagnostic_flags
 
-    def get_setpoint_temperature(self):  # -> temperature:float
+    def get_setpoint_temperature(self) -> float:  # -> temperature:float
         return self.readings.setpoint_temperature
 
-    def set_setpoint_temperature(self, temperature):
+    def set_setpoint_temperature(self, temperature: float):
         self.readings.setpoint_temperature = temperature
         payload = OpenThings.Message(MIHO013_SET_TEMPERATURE, header=self.__class__.header()).copyof()
         if temperature < 0:
@@ -165,6 +163,13 @@ class MIHO013(MiHomeDevice):
             temperature = 30
         payload.set(recs_TEMPERATURE_value=int(temperature * 256))
         self.queue_message(payload)
+
+    def set_temperature(self, temperature: float):
+        self.enable_thermostat()
+        self.set_setpoint_temperature(temperature)
+
+    def get_temperature(self) -> float:
+        return self.get_ambient_temperature()
 
     def set_valve_position(self, position):
         payload = OpenThings.Message(MIHO013_SET_VALVE_POSITION, header=self.__class__.header()).copyof()

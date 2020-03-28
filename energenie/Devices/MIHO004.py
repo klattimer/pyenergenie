@@ -6,7 +6,7 @@ class MIHO004(MiHomeDevice):
     _product_id = 0x01
     _product_name = "Socket Monitor adaptor"
     _description = "The Monitor adapter allows you to monitor the power being used by an attached appliance."
-    _product_rf = "FSK(rx)"
+    _product_rf = "FSK(tx)"
     _product_url = "https://energenie4u.co.uk/catalogue/product/MIHO004"
 
     """Energenie Monitor-only Adaptor"""
@@ -22,11 +22,6 @@ class MIHO004(MiHomeDevice):
             real_power     = None
         self.readings = Readings()
         self.radio_config.inner_times = 4
-        self.capabilities.send = True
-        self.capabilities.switch = True
-
-    def __repr__(self):
-        return "MIHO004(%s)" % str(hex(self.device_id))
 
     @staticmethod
     def get_join_req(deviceid):
@@ -59,35 +54,35 @@ class MIHO004(MiHomeDevice):
                     param_name = "UNKNOWN_%s" % str(hex(paramid))
                 print("unwanted paramid: %s" % param_name)
 
-    def get_readings(self):  # -> readings:pydict
+    def get_readings(self) -> float:  # -> readings:pydict
         """A way to get all readings as a single consistent set"""
         return self.readings
 
-    def get_voltage(self):  # -> voltage:float
+    def get_voltage(self) -> float:  # -> voltage:float
         """Last stored state of voltage reading, None if unknown"""
         if self.readings.voltage is None:
             raise RuntimeError("No voltage reading received yet")
         return self.readings.voltage
 
-    def get_frequency(self):  # -> frequency:float
+    def get_frequency(self) -> float:  # -> frequency:float
         """Last stored state of frequency reading, None if unknown"""
         if self.readings.frequency is None:
             raise RuntimeError("No frequency reading received yet")
         return self.readings.frequency
 
-    def get_apparent_power(self):  # ->power:float
+    def get_apparent_power(self) -> float:  # ->power:float
         """Last stored state of apparent power reading, None if unknown"""
         if self.readings.apparent_power is None:
             raise RuntimeError("No apparent power reading received yet")
         return self.readings.apparent_power
 
-    def get_reactive_power(self):  # -> power:float
+    def get_reactive_power(self) -> float:  # -> power:float
         """Last stored state of reactive power reading, None if unknown"""
         if self.readings.reactive_power is None:
             raise RuntimeError("No reactive power reading received yet")
         return self.readings.reactive_power
 
-    def get_real_power(self):  # -> power:float
+    def get_real_power(self) -> float:  # -> power:float
         """Last stored state of real power reading, None if unknown"""
         if self.readings.real_power is None:
             raise RuntimeError("No real power reading received yet")

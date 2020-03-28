@@ -9,8 +9,5 @@ class EnergenieDevice(Device):
     def __init__(self, **kw_args):
         Device.__init__(self, **kw_args)
 
-    def get_device_id(self):  # -> id:int
-        return self.device_id
-
     def __repr__(self):
         return "EnergenieDevice(%s)" % str(self.device_id)

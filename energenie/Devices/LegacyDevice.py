@@ -19,7 +19,7 @@ class LegacyDevice(EnergenieDevice):
         # self.radio_config.codec      = "4bit"
 
     def __repr__(self):
-        return "LegacyDevice(%s)" % str(self.device_id)
+        return "%s(%s)" % (self.__class__.__name__, str(self.device_id))
 
     def send_message(self, payload):
         if self.air_interface is not None:

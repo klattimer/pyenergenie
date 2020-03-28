@@ -42,7 +42,7 @@ class MiHomeDevice(EnergenieDevice):
         # self.config.encryptPIP = CRYPT_PIP
 
     def __repr__(self):
-        return "MiHomeDevice(%s,%s,%s)" % (str(self.__class__._manufacturer_id), str(self.__class__._product_id), str(self.device_id))
+        return "%s(%s,%s,%s)" % (self.__class__.__name, str(self.__class__._manufacturer_id), str(self.__class__._product_id), str(self.device_id))
 
     @classmethod
     def get_join_req(cls, mfrid, productid, deviceid):
@@ -81,6 +81,7 @@ class MiHomeDevice(EnergenieDevice):
             # TODO: might want to send the config, either as a send parameter,
             # or by calling air_interface.configure() first?
             self.air_interface.send(payload, encoded=encoded, radio_config=self.radio_config)
+            print("send_message(mock[%s %s %s]):%s" % (str(m), str(p), str(d), payload))
         else:
             m = self.__class__._manufacturer_id
             p = self.__class__._product_id

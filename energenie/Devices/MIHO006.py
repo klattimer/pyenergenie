@@ -6,7 +6,7 @@ class MIHO006(MiHomeDevice):
     _product_id = 0x05
     _product_name = "Whole house monitor"
     _product_description = "This allows you to monitor the power and energy usage of your entire home."
-    _product_rf = "FSK(rx)"
+    _product_rf = "FSK(tx)"
     _product_url = "https://energenie4u.co.uk/catalogue/product/MIHO006"
 
     """An Energenie MiHome Home Monitor"""
@@ -18,11 +18,6 @@ class MIHO006(MiHomeDevice):
             current         = None
             apparent_power  = None
         self.readings = Readings()
-
-        self.capabilities.send = True
-
-    def __repr__(self):
-        return "MIHO006(%s)" % str(hex(self.device_id))
 
     def handle_message(self, payload):
         for rec in payload["recs"]:
@@ -48,11 +43,11 @@ class MIHO006(MiHomeDevice):
                     print("unwanted paramid: %s" % param_name)
         pass
 
-    def get_battery_voltage(self):  # -> voltage:float
+    def get_battery_voltage(self) -> float:  # -> voltage:float
         return self.readings.battery_voltage
 
-    def get_current(self):  # -> current:float
+    def get_current(self) -> float:  # -> current:float
         return self.readings.current
 
-    def get_apparent_power(self):  # -> power:float
+    def get_apparent_power(self) -> float:  # -> power:float
         return self.readings.apparent_power

@@ -9,6 +9,7 @@
 import time
 import argparse
 import threading
+import logging
 from queue import Queue
 
 from . import radio
@@ -84,6 +85,9 @@ class Energenie(threading.Thread):
         super().start()
 
     def run(self):
+        #
+        #
+        # TODO: Set up logging here
         while self.running is True:
             self.loop()
 

@@ -41,6 +41,11 @@ class EnergenieShell(Cmd):
         """
         self.energenie.start()
 
+    def do_describe(self, device):
+        """
+        Describe a device's capabilities
+        """
+
     def do_learn(self):
         """
         Learn OOK signals from transmitters

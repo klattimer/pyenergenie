@@ -17,11 +17,6 @@ class MIHO033(MiHomeDevice):
             switch_state = None
         self.readings = Readings()
 
-        self.capabilities.send = True
-
-    def __repr__(self):
-        return "MIHO033(%s)" % str(hex(self.device_id))
-
     def handle_message(self, payload):
         # print("MIHO033 new data %s %s" % (self.device_id, payload))
         for rec in payload["recs"]:
@@ -42,5 +37,5 @@ class MIHO033(MiHomeDevice):
                         param_name = "UNKNOWN_%s" % str(hex(paramid))
                     print("unwanted paramid: %s" % param_name)
 
-    def get_switch_state(self):  # -> switch:bool
+    def get_switch_state(self) -> boolean:  # -> switch:bool
         return self.readings.switch_state

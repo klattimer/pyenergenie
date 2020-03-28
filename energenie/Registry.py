@@ -6,6 +6,7 @@
 
 import os
 import json
+import logging
 
 from copy import copy
 from . import Devices
@@ -47,7 +48,7 @@ def find_config(writable=False):
         elif writable is True and os.access(os.path.dirname(d), os.W_OK):
             os.makedirs(d)
             return f
-    print ("Cannot find suitable config path to write, create one in %s" % ' or '.join(search_config))
+    logging.error("Cannot find suitable config path to write, create one in %s" % ' or '.join(search_config))
     raise Exception("No config file")
 
 
@@ -107,7 +108,7 @@ class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
         config_path = find_config(True)
         with open(config_path, 'wt') as f:
             f.write(json.dumps(self.config, indent=4, sort_keys=True))
-        print('Saved configuration in %s' % config_path)
+        logging.debug('Saved configuration in %s' % config_path)
 
     def load_into(self, context):
         """auto-create variables in the provided context, for all persisted registry entries"""
@@ -131,7 +132,7 @@ class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
 
     def setup_device_routing(self, c):
         # if can transmit, we can receive from it
-        if self.fsk_router is not None and c.can_send():
+        if self.fsk_router is not None and c.__class__.can_send():
             if isinstance(c, MiHomeDevice):
                 self.fsk_router.add(c)
         return c
@@ -254,9 +255,7 @@ class Router():
         self.routes[instance.address] = instance
 
     def list(self):
-        print("ROUTES:")
-        for address in self.routes:
-            print("  %s->%s" % (str(address), str(self.routes[address])))
+        return self.routes.keys()
 
     def incoming_message(self, address, message):
         if self.incoming_cb is not None:
@@ -270,7 +269,7 @@ class Router():
             ci.incoming_message(message)
 
         else:  # address has no route
-            print ("No route to an object, for device:", str(address), str(message))
+            logging.debug("No route to an object, for device:", str(address), str(message))
             # TODO: Could consult registry and squash if registry knows it
             self.handle_unknown(address, message)
 
@@ -287,7 +286,7 @@ class Router():
             self.unknown_cb(address, message)
         else:
             # Default action is just a debug message, and drop the message
-            print("Unknown address: %s" % str(address))
+            logging.debug("Unknown address: %s" % str(address))
 
 
 # ---- DISCOVERY AGENT ---------------------------------------------------------
@@ -302,12 +301,12 @@ class Discovery():
         self.registry.fsk_router.when_unknown(self.unknown_device)
 
     def unknown_device(self, address, message):
-        print("message from unknown device:%s" % str(address))
+        logging.debug("message from unknown device:%s" % str(address))
         # default action is to drop message
         # override this method in sub classes if you want special processing
 
     def reject_device(self, address, message):
-        print("message rejected from:%s" % (str(address)))
+        logging.debug("message rejected from:%s" % (str(address)))
         # default action is to drop message
         # override this method if you want special processing
 
@@ -316,7 +315,7 @@ class Discovery():
         # At moment, intentionally assume everything is mfrid=Energenie
         product_id = address[1]
         device_id  = address[2]
-        print("**** wiring up registry and router for %s" % str(address))
+        logging.debug("**** wiring up registry and router for %s" % str(address))
         ci = Devices.DeviceFactory.get_device_from_id(product_id, device_id=device_id)
         self.registry.add(ci, "auto_%s_%s" % (str(hex(product_id)), str(hex(device_id))))
         self.router.add(ci)
@@ -360,7 +359,7 @@ class JoinAutoDiscovery(Discovery):
         Discovery.__init__(self, registry)
 
     def unknown_device(self, address, message):
-        print("unknown device auto join %s\n%s" % (str(address), str(message)))
+        logging.debug("unknown device auto join %s\n%s" % (str(address), str(message)))
 
         # TODO: need to make this work with correct meta methods
         # #if not OpenThings.PARAM_JOIN in message:
@@ -394,7 +393,7 @@ class JoinAutoDiscovery(Discovery):
         # I would think that this is the correct way to handle this
         if 'recs' in message.keys() and len(message['recs']) > 0:
             rec = message['recs'][0]
-            if rec['paramid'] == 106:
+            if rec['paramid'] == OpenThings.PARAM_JOIN:
                 j = True
 
         if j is None:  # not a join
@@ -403,7 +402,7 @@ class JoinAutoDiscovery(Discovery):
             # but don't forward the join request as it will be malformed with no value
             ci = self.accept_device(address, message, forward=False)
             ci.join_ack()  # Ask new class instance to send a join_ack back to physical device
-            print ("Acknowledged new device %s" % str(address))
+            logging.debug("Acknowledged new device %s" % str(address))
 
 
 class JoinConfirmedDiscovery(Discovery):
@@ -413,7 +412,7 @@ class JoinConfirmedDiscovery(Discovery):
         self.ask_fn = ask
 
     def unknown_device(self, address, message):
-        print("**** unknown device confirmed join %s" % str(address))
+        logging.debug("**** unknown device confirmed join %s" % str(address))
 
         # TODO: need to make this work with correct meta methods
         # #if not OpenThings.PARAM_JOIN in message:
