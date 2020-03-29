@@ -272,14 +272,15 @@ class DeviceFactory:
             try:
                 plugin = getattr(module, m)
 
-                if int(plugin._product_id) in self.product_id_index.keys():
-                    raise Exception("Product ID already registered %d" % int(plugin._product_id))
-                self.product_id_index[int(plugin._product_id)] = plugin
-
                 if m in self.product_model_index.keys():
                     raise Exception("Product model already registered %s" % m)
 
                 self.product_model_index[m] = plugin
+
+                if plugin._product_id is None: continue
+                if int(plugin._product_id) in self.product_id_index.keys():
+                    raise Exception("Product ID already registered %d" % int(plugin._product_id))
+                self.product_id_index[int(plugin._product_id)] = plugin
             except:
                 logging.exception("Plugin failed to load: \"%s\"" % m)
 
