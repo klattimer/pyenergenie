@@ -233,7 +233,7 @@ class DeviceFactory:
 
     @classmethod
     def keys(cls):
-        return cls.singleton().product_model_index.keys()
+        return list(cls.singleton().product_model_index.keys())
 
     @classmethod
     def get_device_from_model(cls, model, **kw_args):
