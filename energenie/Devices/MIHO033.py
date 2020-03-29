@@ -37,5 +37,5 @@ class MIHO033(MiHomeDevice):
                         param_name = "UNKNOWN_%s" % str(hex(paramid))
                     print("unwanted paramid: %s" % param_name)
 
-    def get_switch_state(self) -> boolean:  # -> switch:bool
+    def get_switch_state(self) -> bool:  # -> switch:bool
         return self.readings.switch_state

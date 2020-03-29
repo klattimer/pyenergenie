@@ -53,8 +53,8 @@ class MIHO032(MiHomeDevice):
                         param_name = "UNKNOWN_%s" % str(hex(paramid))
                     print("unwanted paramid: %s" % param_name)
 
-    def get_switch_state(self) -> boolean:  # -> switch:bool
+    def get_switch_state(self) -> bool:  # -> switch:bool
         return self.readings.switch_state
 
-    def get_battery_alarm(self) -> boolean:  # -> alarm:bool
+    def get_battery_alarm(self) -> bool:  # -> alarm:bool
         return self.readings.battery_alarm

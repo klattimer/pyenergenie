@@ -91,13 +91,13 @@ class MIHO005(MiHomeDevice):
                     recs_SWITCH_STATE_value=False)
         self.send_message(payload)
 
-    def set_switch_state(self, state: boolean):
+    def set_switch_state(self, state: bool):
         if state:
             self.turn_on()
         else:
             self.turn_off()
 
-    def get_switch_state(self) -> boolean:
+    def get_switch_state(self) -> bool:
         """Last stored state of the switch, might be None if unknown"""
         return self.readings.switch
 
