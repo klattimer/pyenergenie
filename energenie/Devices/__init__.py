@@ -131,8 +131,7 @@ class Device():
         self.device_id = self.parse_device_id(device_id)
         self.name = name
         self._enabled = enabled
-        if uuid is None:
-            uuid = str(uuid4())
+        if uuid is None: uuid = str(uuid4())
         self.uuid = uuid
 
         class RadioConfig(): pass
@@ -247,25 +246,14 @@ class DeviceFactory:
 
     @classmethod
     def keys(cls):
-        return cls.singleton().product_name_index.keys()
-
-    def __getitem__(self, key):
-        try:
-            key = int(key)
-        except Exception:
-            pass
-
-        if type(key) == int:
-            return self.product_id_index[key]
-
-        return self.product_name_index[key]
+        return cls.singleton().product_model_index.keys()
 
     @classmethod
-    def get_device_from_name(cls, name, **kw_args):
-        if name not in cls.keys():
-            raise ValueError("Unsupported device:%s" % name)
+    def get_device_from_model(cls, model, **kw_args):
+        if model not in cls.keys():
+            raise ValueError("Unsupported device:%s" % model)
 
-        c = cls.singleton().product_name_index[name]
+        c = cls.singleton().product_model_index[model]
         return c(**kw_args)
 
     @classmethod
@@ -277,7 +265,7 @@ class DeviceFactory:
 
     def __init__(self):
         self.product_id_index = {}
-        self.product_name_index = {}
+        self.product_model_index = {}
 
         p = os.path.dirname(os.path.abspath(__file__))
         files = os.listdir(p)
@@ -288,8 +276,25 @@ class DeviceFactory:
             module = importlib.import_module('.' + m, 'energenie.Devices')
             try:
                 plugin = getattr(module, m)
-            except:
-                logging.exception("Plugin failed to load, no such class \"%s\"" % m)
 
-            self.product_id_index[plugin._product_id] = plugin
-            self.product_name_index[m] = plugin
+                if int(plugin._product_id) in self.product_id_index.keys():
+                    raise Exception("Product ID already registered %d" % int(plugin._product_id))
+                self.product_id_index[int(plugin._product_id)] = plugin
+
+                if m in self.product_model_index.keys():
+                    raise Exception("Product model already registered %s" % m)
+
+                self.product_model_index[m] = plugin
+            except:
+                logging.exception("Plugin failed to load: \"%s\"" % m)
+
+    def __getitem__(self, key):
+        try:
+            key = int(key)
+        except Exception:
+            pass
+
+        if type(key) == int:
+            return self.product_id_index[key]
+
+        return self.product_model_index[key]

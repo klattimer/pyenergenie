@@ -68,67 +68,77 @@ class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
 
     def __init__(self):
         # # print("***Opening DeviceRegistry")
-        config_path = find_config()
         self.devices = {}
+        self.device_name_uuid = {}
         self.fsk_router = Router("fsk")
 
         # OOK receive not yet written
         # It will be used to be able to learn codes from Energenie legacy hand remotes
         self.ook_router = None  # Router("ook")
         self.config = {}
-        self.load_from(config_path)
+        self.load()
 
-    def set_fsk_router(self, fsk_router):
-        self.fsk_router = fsk_router
-
-    def load_from(self, filename=None):
+    def load(self, filename=None):
         """Start with a blank in memory registry, and load from the given filename"""
+        if filename is None:
+            filename = find_config()
         with open(filename) as f:
             self.config = json.loads(f.read())
             for device in self.config['devices']:
+                model = device['type']
+                del(device['type'])
+                d = Devices.DeviceFactory.get_device_from_model(model, **device)
+                self.add(d)
 
-                device_type = device['type']
-                device_name = device['name']
-
-                del device['type']
-                del device['name']
-
-                d = Devices.DeviceFactory.get_device_from_name(device_type, **device)
-                self.devices[device_name] = d
-                # TODO: Add enable/disable methods
-                if device['enabled'] is not True:
-                    continue
-                self.setup_device_routing(d)
-
-    def update_config(self):
+    def save(self, filename=None):
         devices = []
         for device in self.devices.values():
             devices.append(device.serialise())
         self.config['devices'] = devices
-        config_path = find_config(True)
+        if filename is None:
+            filename = find_config(True)
         with open(config_path, 'wt') as f:
             f.write(json.dumps(self.config, indent=4, sort_keys=True))
         logging.debug('Saved configuration in %s' % config_path)
 
-    def load_into(self, context):
-        """auto-create variables in the provided context, for all persisted registry entries"""
-        if context is None:
-            raise ValueError("Must provide a context to hold new variables")
+    # def load_into(self, context):
+    #     """auto-create variables in the provided context, for all persisted registry entries"""
+    #     if context is None:
+    #         raise ValueError("Must provide a context to hold new variables")
+    #
+    #     for name in self.devices.keys():
+    #         c = self.get(name)
+    #         # This creates a variable inside the context of this name, points to class instance
+    #         setattr(context, name, c)
 
-        for name in self.devices.keys():
-            c = self.get(name)
-            # This creates a variable inside the context of this name, points to class instance
-            setattr(context, name, c)
-
-    def add(self, device, name):
+    def add(self, device):
         """Add a device class instance to the registry, with a friendly name"""
-        self.devices[name] = device
+        self.devices[device.uuid] = device
+        self.device_name_uuid[device.name] = device.uuid
+        if device.enabled is True:
+            self.setup_device_routing(device)
 
-    def get(self, name):  # -> Device
-        """Get the description for a device class from the store, and construct a class instance"""
-        c = self.devices[name]
-        # Check if device routing is enabled, turn it on if it is, and no address found
-        return c
+    def get(self, name) -> Device:  # -> Device
+        """Get the device instance from the registry"""
+
+        # UUID get
+        if name in self.devices.keys():
+            return self.devices[name]
+
+        # Name get
+        return self.devices[self.device_name_uuid[name]]
+
+    def delete(self, name):
+        """Delete the named class instance"""
+        device = self.get(name)
+        if device.enabled is True:
+            self.remove_device_routing(device)
+        del(self.devices[device.uuid])
+        del(self.device_name_uuid[device.name])
+
+    def list(self):
+        """List the devices by name"""
+        return [k for k in self.device_name_uuid.keys()]
 
     def setup_device_routing(self, c):
         # if can transmit, we can receive from it
@@ -141,57 +151,6 @@ class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
         if self.fsk_router is not None and c.can_send():
             if c.address in self.fsk_router.routes.keys():
                 del(self.fsk_router.routes[c.address])
-
-    def rename(self, old_name, new_name):
-        """Rename a device in the registry"""
-        c = self.devices[old_name]  # get the class instance
-        self.delete(old_name)  # remove from memory and from any disk version
-        self.add(c, new_name)  # Add the same class back, but with the new name
-        # Note: If rx routes are defined, they will still be correct,
-        # because they wire directly to the device class instance
-
-    def delete(self, name):
-        """Delete the named class instance"""
-        del self.devices[name]
-
-    def list(self):
-        """List the registry in a vaguely printable format, mostly for debug"""
-        return [k for k in self.devices.keys()]
-
-    def size(self):
-        """How many entries are there in the registry?"""
-        return len(self.devices.keys())
-
-    def devices(self):
-        """A generator/iterator that can be used to get a list of device instances"""
-
-        # Python2 and Python3 safe
-        for k in self.devices.keys():
-            device = self.devices[k]
-            yield device
-
-        # first get a list of all devices, in case the registry changes while iterating
-        # #devices = self.devices.keys()
-
-        # now 'generate' one per call
-        # #i = 0
-        # #while i < len(devices):
-        # #    k = devices[i]
-        # #    device = self.devices[k]
-        # #    yield device
-        # #    i += 1
-
-    def names(self):
-        """A generator/iterator that can be used to get a list of device names"""
-        # first get a list of all devices, in case the registry changes while iterating
-        devices = self.devices.keys()
-
-        # now 'generate' one per call
-        i = 0
-        while i < len(devices):
-            k = devices[i]
-            yield k
-            i += 1
 
 
 # ----- DISCOVERY AND LEARNING -------------------------------------------------
