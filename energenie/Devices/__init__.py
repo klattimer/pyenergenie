@@ -5,7 +5,7 @@ import os
 import importlib
 import inspect
 import time
-from collections import defaultdict
+from collections import defaultdict, Counter
 from uuid import uuid4
 import logging
 
@@ -142,7 +142,8 @@ class Device():
 
         self.updated_cb = None
         self.rxseq = 0
-        self.lastHandledMessage = 0
+        self.last_receive_time = 0
+        self.__last_receive_intervals = []
 
     @staticmethod
     def parse_device_id(device_id):
@@ -156,43 +157,10 @@ class Device():
 
         if type(device_id) == tuple or type(device_id) == list:
             # each part of the tuple could be encoded
-            res = []
-            for p in device_id:
-                res.append(Device.parse_device_id(p))
-            # TODO: could usefully convert to tuple here to be helpful
-            return res
+            return tuple([Device.parse_device_id(p) for p in device_id])
 
-        if type(device_id) == str:
-            # could be hex or decimal or strtuple or strlist
-            if device_id == "":
-                raise ValueError("device_id is blank, not allowed")
-            elif device_id.startswith("0x"):
-                return int(device_id, 16)
-            elif device_id[0] == '(' and device_id[-1] == ')':
-                # print("**** parse tuple")
-                inner = device_id[1:-1]
-                parts = inner.split(',')
-                # print(parts)
-                res = []
-                for p in parts:
-                    res.append(Device.parse_device_id(p))
-                # print(res)
-                return res
-
-            elif device_id[0] == '[' and device_id[-1] == ']':
-                # print("**** parse list")
-                inner = device_id[1:-1]
-                parts = inner.split(',')
-                # print(parts)
-                res = []
-                for p in parts:
-                    res.append(Device.parse_device_id(p))
-                # TODO: could usefully change to tuple here
-                # print(res)
-                return res
-            else:
-                return int(device_id, 10)
-
+        if type(device_id) == str and len(device_id) > 0:
+            return eval(device_id)
         else:
             raise ValueError("device_id unsupported type or format, got: %s %s" % (type(device_id), str(device_id)))
 
@@ -202,7 +170,19 @@ class Device():
 
     def get_next_receive_time(self):  # -> timestamp
         """An estimate of the next time we expect a message from this device"""
-        pass
+        #
+        # based on the assumption that some incoming packets are corrupt, we take the
+        # modal interval between hits, using a window of 30 seconds, we then collect the
+        # values in that window and average them
+        #
+        min_interval = 30  # 30 seconds
+        intervals = [min_interval * round(x / min_interval) for x in self.__last_receive_intervals]
+        counted = Counter(intervals)
+        most_common = counted.most_common(1)[0]
+        segment = [x for x in self.__last_receive_intervals
+                   if x > most_common - (min_interval / 2.) and
+                   x < most_common + (min_interval / 2.)]
+        return self.__last_receive_time + (sum(segment) / len(segment))
 
     def get_receive_count(self):
         return self.rxseq
@@ -214,7 +194,13 @@ class Device():
         self.handle_message(payload)
         if self.updated_cb is not None:
             self.updated_cb(self, payload)
-        self.lastHandledMessage = time.time()
+        l = time.time()
+        if self.last_receive_time > 0:
+            interval = l - self.last_receive_time
+            self.__last_receive_intervals.append(interval)
+        if self.__last_receive_intervals > 60:
+            self.__last_receive_intervals = self.__last_receive_intervals[-60:]
+        self.last_receive_time = l
 
     def handle_message(self, payload):
         """Default handling for a new message"""
