@@ -38,7 +38,7 @@ class OOKSwitch(LegacyDevice):
         self.state = False
         self.send_message(payload)
 
-    def set_switch_state(self, state: boolean):
+    def set_switch_state(self, state: bool):
         if state is True:
             self.turn_on()
         else:
