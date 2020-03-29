@@ -178,7 +178,7 @@ class MIHO013(MiHomeDevice):
         self._valvePosition = position
         self.queue_message(payload)
 
-    def get_valve_position(self) -> int):
+    def get_valve_position(self) -> int:
         return self._valvePosition
 
     def set_identify(self):
