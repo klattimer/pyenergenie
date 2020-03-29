@@ -69,6 +69,7 @@ class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
     def __init__(self):
         # # print("***Opening DeviceRegistry")
         self.devices = {}
+        self.device_ids = {}
         self.device_name_uuid = {}
         self.fsk_router = Router("fsk")
 
@@ -115,6 +116,8 @@ class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
         """Add a device class instance to the registry, with a friendly name"""
         self.devices[device.uuid] = device
         self.device_name_uuid[device.name] = device.uuid
+        self.device_ids[device.device_id] = device.uuid
+
         if device.enabled is True:
             self.setup_device_routing(device)
 
@@ -124,6 +127,10 @@ class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
         # UUID get
         if name in self.devices.keys():
             return self.devices[name]
+
+        # ID get
+        if name in self.device_ids.keys():
+            return self.devices[self.device_ids[name]]
 
         # Name get
         return self.devices[self.device_name_uuid[name]]
@@ -220,17 +227,21 @@ class Router():
         if self.incoming_cb is not None:
             self.incoming_cb(address, message)
 
-        # print("router.incoming addr=%s" % str(address))
-        # print("routes:%s" % str(self.routes))
-
         if address in self.routes:
             ci = self.routes[address]
             ci.incoming_message(message)
+        else:
+            device_id  = address[2]
+            if device_id in DeviceRegistry.singleton().device_ids.keys():
+                device = DeviceRegistry.singleton().get(device_id)
 
-        else:  # address has no route
-            logging.debug("No route to an object, for device:", str(address), str(message))
-            # TODO: Could consult registry and squash if registry knows it
-            self.handle_unknown(address, message)
+                if device in self.routes.values():
+                    device.incoming_message()
+                    logging.debug("Assuming product and manufacturer are corrupt")
+            else:
+                logging.debug("No route to an object, for device:", str(address), str(message))
+                # TODO: Could consult registry and squash if registry knows it
+                self.handle_unknown(address, message)
 
     def when_incoming(self, callback):
         self.incoming_cb = callback
@@ -270,8 +281,7 @@ class Discovery():
         # override this method if you want special processing
 
     def accept_device(self, address, message, forward=True):
-        # #print("accept_device:%s" % str(address))
-        # At moment, intentionally assume everything is mfrid=Energenie
+        # manufacturer_id = address[0]
         product_id = address[1]
         device_id  = address[2]
         logging.debug("**** wiring up registry and router for %s" % str(address))
@@ -281,10 +291,9 @@ class Discovery():
 
         # Finally, forward the first message to the new device class instance
         if forward:
-            # #print("**** routing first message to class instance")
             ci.incoming_message(message)
 
-        return ci  # The new device class instance that we created
+        return ci
 
 
 class AutoDiscovery(Discovery):

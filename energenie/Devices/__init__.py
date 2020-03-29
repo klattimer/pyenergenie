@@ -13,8 +13,8 @@ import logging
 class Device():
     _manufacturer_id = None
     _broadcast_id = None
-    _crypt_pid = 242
-    _crypt_pip = 0x0100
+    _crypt_pid = 0x00F2  # 242
+    _crypt_pip = 0x0100  # 256
 
     _product_id = None
     _product_name = "Base Device Class"
@@ -248,6 +248,14 @@ class DeviceFactory:
         c = cls.singleton().product_id_index[id]
         return c(**kw_args)
 
+    @property
+    def manufacturers(self):
+        return self._manufacturers
+
+    @property
+    def products(self):
+        return self.product_id_index.keys()
+
     def __init__(self):
         self.product_id_index = {}
         self.product_model_index = {}
@@ -272,6 +280,9 @@ class DeviceFactory:
                 self.product_model_index[m] = plugin
             except:
                 logging.exception("Plugin failed to load: \"%s\"" % m)
+
+        self._manufacturers = list(set([self[d]._manufacturer_id for d in self.product_model_index.keys()]))
+        self._manufacturers.sort()
 
     def __getitem__(self, key):
         try:
