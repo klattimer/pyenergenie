@@ -75,8 +75,9 @@ class Device():
             def convarg(arg):
                 t = argspec.annotations[arg]
                 ret = {'arg': arg, 'type': t.__name__}
-                p = argspec.args.index(arg) - len(argspec.defaults)
-                if p >= 0: ret['default'] = argspec.defaults[p]
+                if argspec.defaults is not None:
+                    p = argspec.args.index(arg) - len(argspec.defaults)
+                    if p >= 0: ret['default'] = argspec.defaults[p]
                 return ret
 
             return_type = None
