@@ -69,7 +69,10 @@ class Device():
             argspec = inspect.getfullargspec(getattr(cls, k))
 
             def convarg(arg):
-                t = argspec.annotations[arg]
+                if arg in argspec.annotations.keys():
+                    t = argspec.annotations[arg]
+                else:
+                    t = 'Any'
                 ret = {'arg': arg, 'type': t.__name__}
                 if argspec.defaults is not None:
                     p = argspec.args.index(arg) - len(argspec.defaults)
@@ -82,7 +85,7 @@ class Device():
 
             features[k[4:]][k[0:3]] = {
                 'method': k,
-                'args': [convarg(arg) for arg in argspec.args if arg != 'self'],
+                'args': [convarg(arg) for arg in argspec.args if arg != 'self' and arg != 'cls'],
                 'return': return_type
             }
         return features
