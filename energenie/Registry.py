@@ -121,7 +121,7 @@ class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
         if device.enabled is True:
             self.setup_device_routing(device)
 
-    def get(self, name) -> Device:  # -> Device
+    def get(self, name) -> Devices.Device:  # -> Device
         """Get the device instance from the registry"""
 
         # UUID get
