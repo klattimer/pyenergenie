@@ -171,7 +171,7 @@ class MIHO013(MiHomeDevice):
     def get_temperature(self) -> float:
         return self.get_ambient_temperature()
 
-    def set_valve_position(self, position):
+    def set_valve_position(self, position: int):
         payload = OpenThings.Message(MIHO013_SET_VALVE_POSITION, header=self.__class__.header()).copyof()
         payload.set(recs_VALVE_POSITION_value=position)
         self.queue_message(payload)

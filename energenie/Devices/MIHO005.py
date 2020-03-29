@@ -71,10 +71,6 @@ class MIHO005(MiHomeDevice):
                     param_name = "UNKNOWN_%s" % str(hex(paramid))
                 print("unwanted paramid: %s" % param_name)
 
-    def get_readings(self):  # -> readings:pydict
-        """A way to get all readings as a single consistent set"""
-        return self.readings
-
     def turn_on(self):
         # TODO: header construction should be in MiHomeDevice as it is shared?
         payload = OpenThings.Message(SWITCH)

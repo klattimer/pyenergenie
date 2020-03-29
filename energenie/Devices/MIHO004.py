@@ -54,10 +54,6 @@ class MIHO004(MiHomeDevice):
                     param_name = "UNKNOWN_%s" % str(hex(paramid))
                 print("unwanted paramid: %s" % param_name)
 
-    def get_readings(self) -> float:  # -> readings:pydict
-        """A way to get all readings as a single consistent set"""
-        return self.readings
-
     def get_voltage(self) -> float:  # -> voltage:float
         """Last stored state of voltage reading, None if unknown"""
         if self.readings.voltage is None:
