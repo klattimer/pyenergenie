@@ -126,8 +126,7 @@ class Device():
             elif self.__class__._product_rf.startswith('OOK'):
                 self.air_interface = DeviceFactory.ook_interface
             else:
-                # TODO: This is probably an error condition.
-                self.air_interface = None
+                raise Exception("Air interface is undefined for this device %s(%s):%s" % (name, str(device_id), uuid))
         self.device_id = self.parse_device_id(device_id)
         self.name = name
         self._enabled = enabled

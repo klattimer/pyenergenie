@@ -284,8 +284,6 @@ class Discovery():
             # #print("**** routing first message to class instance")
             ci.incoming_message(message)
 
-        # #self.registry.list()
-        # #self.router.list()
         return ci  # The new device class instance that we created
 
 
