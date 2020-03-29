@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from .. import OnAir
-from .. import Registry
+# from .. import Registry
 import os
 import importlib
 import inspect
@@ -32,10 +32,12 @@ class Device():
 
     @enabled.setter
     def enabled(self, value):
-        if value is True:
-            Registry.DeviceRegistry.singleton().setup_device_routing(self)
-        else:
-            Registry.DeviceRegistry.singleton().remove_device_routing(self)
+        # Causes circular import problem
+        #
+        # if value is True:
+        #     Registry.DeviceRegistry.singleton().setup_device_routing(self)
+        # else:
+        #     Registry.DeviceRegistry.singleton().remove_device_routing(self)
         self._enabled = value
 
     @classmethod
