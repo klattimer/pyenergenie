@@ -79,10 +79,14 @@ class Device():
                 if p >= 0: ret['default'] = argspec.defaults[p]
                 return ret
 
+            return_type = None
+            if 'return' in argspec.annotations.keys():
+                return_type = argspec.annotations['return'].__name__
+
             features[k[4:]][k[0:3]] = {
                 'method': k,
                 'args': [convarg(arg) for arg in argspec.args if arg != 'self'],
-                'return': argspec.annotations['return'].__name__
+                'return': return_type
             }
         return features
 
