@@ -327,40 +327,10 @@ class JoinAutoDiscovery(Discovery):
     def unknown_device(self, address, message):
         logging.debug("unknown device auto join %s\n%s" % (str(address), str(message)))
 
-        # TODO: need to make this work with correct meta methods
-        # #if not OpenThings.PARAM_JOIN in message:
-        # FIXME This is bullshit
-        # the message received looks like this
-        # {
-        # 	"header": {
-        # 		"encryptPIP": 32763,
-        # 		"mfrid": 4,
-        # 		"productid": 3,
-        # 		"sensorid": 3942
-        # 	},
-        # 	"recs": [
-        # 		{
-        # 			"length": 0,
-        # 			"paramid": 106,
-        # 			"paramname": "JOIN",
-        # 			"paramunit": "",
-        # 			"typeid": 0,
-        # 			"wr": true
-        # 		}
-        # 	],
-        # 	"rxtimestamp": 1584882287.441865,
-        # 	"type": "OK"
-        # }
         try:
             j = message[OpenThings.PARAM_JOIN]
         except KeyError:
             j = None
-
-        # I would think that this is the correct way to handle this
-        if 'recs' in message.keys() and len(message['recs']) > 0:
-            rec = message['recs'][0]
-            if rec['paramid'] == OpenThings.PARAM_JOIN:
-                j = True
 
         if j is None:  # not a join
             Discovery.unknown_device(self, address, message)
@@ -380,8 +350,6 @@ class JoinConfirmedDiscovery(Discovery):
     def unknown_device(self, address, message):
         logging.debug("**** unknown device confirmed join %s" % str(address))
 
-        # TODO: need to make this work with correct meta methods
-        # #if not OpenThings.PARAM_JOIN in message:
         try:
             j = message[OpenThings.PARAM_JOIN]
         except KeyError:
