@@ -44,5 +44,5 @@ class OOKSwitch(LegacyDevice):
         else:
             self.turn_off()
 
-    def get_switch_state(self) -> float:
+    def get_switch_state(self) -> bool:
         return self.state
