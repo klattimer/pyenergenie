@@ -58,19 +58,15 @@ class Device():
         # Constricting the method naming like this is necessary to provide a
         # list of supported features.
         #
-        keys = cls.__dict__.keys()
+        keys = [func for func in dir(cls) if callable(getattr(cls, func))]
         features = defaultdict(dict)
 
         for k in keys:
-            # Check if it's not a function, continue
-            if type(cls.__dict__[k]).__name__ != 'function':
-                continue
-
             if not k.startswith("get_") and not k.startswith("set_"):
                 continue
 
             # Get the function description, arguments, return etc...
-            argspec = inspect.getfullargspec(cls.__dict__[k])
+            argspec = inspect.getfullargspec(getattr(cls, k))
 
             def convarg(arg):
                 t = argspec.annotations[arg]
@@ -170,11 +166,11 @@ class Device():
         else:
             raise ValueError("device_id unsupported type or format, got: %s %s" % (type(device_id), str(device_id)))
 
-    def get_last_receive_time(self):  # ->timestamp
+    def get_last_receive_time(self) -> int:  # ->timestamp
         """The timestamp of the last time any message was received by this device"""
         return self.last_receive_time
 
-    def get_next_receive_time(self):  # -> timestamp
+    def get_next_receive_time(self) -> int:  # -> timestamp
         """An estimate of the next time we expect a message from this device"""
         #
         # based on the assumption that some incoming packets are corrupt, we take the
@@ -190,7 +186,7 @@ class Device():
                    x < most_common + (min_interval / 2.)]
         return self.__last_receive_time + (sum(segment) / len(segment))
 
-    def get_receive_count(self):
+    def get_receive_count(self) -> int:
         return self.rxseq
 
     def incoming_message(self, payload):

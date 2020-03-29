@@ -101,6 +101,7 @@ class MIHO013(MiHomeDevice):
         self.lastDiagnosticsReading = None
         self.voltageReadingPeriod = 3600
         self.diagnosticsReadingPeriod = 3600
+        self._valvePosition = None
 
     def handle_message(self, payload):
         # send a message whilst receive window is open, this MUST be done first
@@ -174,7 +175,11 @@ class MIHO013(MiHomeDevice):
     def set_valve_position(self, position: int):
         payload = OpenThings.Message(MIHO013_SET_VALVE_POSITION, header=self.__class__.header()).copyof()
         payload.set(recs_VALVE_POSITION_value=position)
+        self._valvePosition = position
         self.queue_message(payload)
+
+    def get_valve_position(self) -> int):
+        return self._valvePosition
 
     def set_identify(self):
         self.queue_message(OpenThings.Message(MIHO013_IDENTIFY, header=self.__class__.header()).copyof())
