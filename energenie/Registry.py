@@ -355,12 +355,6 @@ class JoinConfirmedDiscovery(Discovery):
         except KeyError:
             j = None
 
-        # I would think that this is the correct way to handle this
-        if 'recs' in message.keys() and len(message['recs']) > 0:
-            rec = message['recs'][0]
-            if rec['paramid'] == 106:
-                j = True
-
         if j is None:  # not a join
             Discovery.unknown_device(self, address, message)
         else:  # it is a join
