@@ -236,7 +236,7 @@ class Router():
                 device = DeviceRegistry.singleton().get(device_id)
 
                 if device in self.routes.values():
-                    device.incoming_message()
+                    device.incoming_message(message)
                     logging.debug("Assuming product and manufacturer are corrupt")
             else:
                 logging.debug("No route to an object, for device: %s, %s" % (str(address), str(message)))
