@@ -112,7 +112,7 @@ class Device():
 
     @classmethod
     def can_send(cls):
-        return cls._product_rf.contains('tx')
+        return 'tx' in cls._product_rf
 
     def serialise(self):
         return {
