@@ -124,7 +124,7 @@ class Device():
         }
 
     """A generic connected device abstraction"""
-    def __init__(self, name=None, device_id=None, enabled=True, uuid=None):
+    def __init__(self, name, device_id, enabled=True, uuid=None):
         if type(self.__class__._product_rf) == str:
             if self.__class__._product_rf.startswith('FSK'):
                 self.air_interface = DeviceFactory.fsk_interface
@@ -179,6 +179,7 @@ class Device():
         # modal interval between hits, using a window of 30 seconds, we then collect the
         # values in that window and average them
         #
+        if len(self.__last_receive_intervals) < 2: return -1
         min_interval = 30  # 30 seconds
         intervals = [min_interval * round(x / min_interval) for x in self.__last_receive_intervals]
         counted = Counter(intervals)

@@ -42,7 +42,7 @@ class MiHomeDevice(EnergenieDevice):
         # self.config.encryptPIP = CRYPT_PIP
 
     def __repr__(self):
-        return "%s(%s,%s,%s)" % (self.__class__.__name, str(self.__class__._manufacturer_id), str(self.__class__._product_id), str(self.device_id))
+        return "%s(%s,%s,%s)" % (self.__class__.__name__, str(self.__class__._manufacturer_id), str(self.__class__._product_id), str(self.device_id))
 
     @classmethod
     def get_join_req(cls, mfrid, productid, deviceid):
