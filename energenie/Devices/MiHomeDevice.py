@@ -1,6 +1,6 @@
 from energenie.Devices.EnergenieDevice import EnergenieDevice
 import energenie.OpenThings as OpenThings
-
+import logging
 
 JOIN_REQ = {
     "recs": [
@@ -80,10 +80,8 @@ class MiHomeDevice(EnergenieDevice):
         if self.air_interface is not None:
             # TODO: might want to send the config, either as a send parameter,
             # or by calling air_interface.configure() first?
+            # No we don't, it'll delay response, we have a short window
             self.air_interface.send(payload, encoded=encoded, radio_config=self.radio_config)
-            print("send_message(mock[%s %s %s]):%s" % (str(m), str(p), str(d), payload))
-        else:
-            m = self.__class__._manufacturer_id
-            p = self.__class__._product_id
-            d = self.device_id
-            print("send_message(mock[%s %s %s]):%s" % (str(m), str(p), str(d), payload))
+
+        d = (str(self.__class__._manufacturer_id), str(self.__class__._product_id), str(self.device_id), payload)
+        logging.debug("send_message(mock[%s %s %s]):%s" % d)
