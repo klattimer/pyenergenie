@@ -239,7 +239,7 @@ class Router():
                     device.incoming_message()
                     logging.debug("Assuming product and manufacturer are corrupt")
             else:
-                logging.debug("No route to an object, for device:", str(address), str(message))
+                logging.debug("No route to an object, for device: %s, %s" % (str(address), str(message)))
                 # TODO: Could consult registry and squash if registry knows it
                 self.handle_unknown(address, message)
 
@@ -285,9 +285,8 @@ class Discovery():
         product_id = address[1]
         device_id  = address[2]
         logging.debug("**** wiring up registry and router for %s" % str(address))
-        ci = Devices.DeviceFactory.get_device_from_id(product_id, device_id=device_id)
-        self.registry.add(ci, "auto_%s_%s" % (str(hex(product_id)), str(hex(device_id))))
-        self.router.add(ci)
+        ci = Devices.DeviceFactory.get_device_from_id(product_id, device_id=device_id, name="auto_%s_%s" % (str(hex(product_id)), str(hex(device_id))))
+        self.registry.add(ci)
 
         # Finally, forward the first message to the new device class instance
         if forward:
