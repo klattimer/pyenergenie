@@ -203,7 +203,7 @@ class Device():
         if self.last_receive_time > 0:
             interval = l - self.last_receive_time
             self.__last_receive_intervals.append(interval)
-        if self.__last_receive_intervals > 60:
+        if len(self.__last_receive_intervals) > 60:
             self.__last_receive_intervals = self.__last_receive_intervals[-60:]
         self.last_receive_time = l
 
