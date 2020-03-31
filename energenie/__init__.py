@@ -88,6 +88,7 @@ class Energenie(threading.Thread):
         #
         #
         # TODO: Set up logging here
+        logging.basicConfig(level=logging.DEBUG)
         while self.running is True:
             self.loop()
 
