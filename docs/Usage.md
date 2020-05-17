@@ -63,7 +63,9 @@ Received signal 4231
     "webhooks": [
         {
             "url": "https://192.168.1.1/my/endpoint",
-            "authorization_token": "token",
+            "headers": {
+            		"Authorization": "Bearer xFgbHASsdASwDASASfeg.x.y"
+            },
             "format": "JSON",
             "polling_interval": 600
         }
