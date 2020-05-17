@@ -98,9 +98,9 @@ class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
         self.config['devices'] = devices
         if filename is None:
             filename = find_config(True)
-        with open(config_path, 'wt') as f:
+        with open(filename, 'wt') as f:
             f.write(json.dumps(self.config, indent=4, sort_keys=True))
-        logging.debug('Saved configuration in %s' % config_path)
+        logging.debug('Saved configuration in %s' % filename)
 
     # def load_into(self, context):
     #     """auto-create variables in the provided context, for all persisted registry entries"""
