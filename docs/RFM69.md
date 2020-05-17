@@ -4,10 +4,10 @@
 
 ### ENER314-RT Transmitter/Receiver for Raspberry Pi
 
-<img src="/Volumes/TarProjects/Sync/pyenergenie/doc/ENER314-RT.jpg" alt="ENER314-RT" style="zoom: 33%;" />
+<img src="ENER314-RT.jpg" alt="ENER314-RT" style="zoom: 33%;" />
 
 ### RFM69HCW  
-<img src="/Volumes/TarProjects/Sync/pyenergenie/doc/rfm69hcw.jpg" alt="rfm69hcw" style="zoom:24%;" /><img src="/Volumes/TarProjects/Sync/pyenergenie/doc/rfm69hcw-back.jpg" alt="rfm69hcw-back" style="zoom:24%;" />
+<img src="rfm69hcw.jpg" alt="rfm69hcw" style="zoom:24%;" /><img src="rfm69hcw-back.jpg" alt="rfm69hcw-back" style="zoom:24%;" />
 
 
  - Likely RFM12B boards
@@ -15,7 +15,7 @@
 
 ## RFM69 Wiring pattern
 
-![GPIO-Pinout-Diagram-2](/Volumes/TarProjects/Sync/pyenergenie/doc/GPIO-Pinout-Diagram-2.png)
+![GPIO-Pinout-Diagram-2](GPIO-Pinout-Diagram-2.png)
 
 |H RFM69|Raspberry Pi| Function |
 | ---- | ---- | ---- |
