@@ -66,6 +66,12 @@ class MIHO004(MiHomeDevice):
             raise RuntimeError("No frequency reading received yet")
         return self.readings.frequency
 
+    def get_current(self) -> float:  # ->power:float
+        """Last stored state of current reading, None if unknown"""
+        if self.readings.apparent_power is None:
+            raise RuntimeError("No current reading received yet")
+        return self.readings.apparent_power
+
     def get_apparent_power(self) -> float:  # ->power:float
         """Last stored state of apparent power reading, None if unknown"""
         if self.readings.apparent_power is None:
