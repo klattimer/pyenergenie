@@ -12,6 +12,7 @@ from copy import copy
 from . import Devices
 from energenie.Devices.MiHomeDevice import MiHomeDevice
 from . import OpenThings
+from .Plugins import HandlerFactory
 
 
 search_config = [
@@ -52,11 +53,7 @@ def find_config(writable=False):
     raise Exception("No config file")
 
 
-# ----- NEW DEVICE REGISTRY ----------------------------------------------------
-
-# Done as a class, so we can have multiple registries if we want.
-
-class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
+class DeviceRegistry():
     """A persistent registry for device class instance configurations"""
     __single = None
 
@@ -80,7 +77,7 @@ class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
         self.load()
 
     def load(self, filename=None):
-        """Start with a blank in memory registry, and load from the given filename"""
+        """Load the registered devices from our configuration file"""
         if filename is None:
             filename = find_config()
         with open(filename) as f:
@@ -101,16 +98,6 @@ class DeviceRegistry():  # this is actions, so is this the 'RegistRAR'??
         with open(filename, 'wt') as f:
             f.write(json.dumps(self.config, indent=4, sort_keys=True))
         logging.debug('Saved configuration in %s' % filename)
-
-    # def load_into(self, context):
-    #     """auto-create variables in the provided context, for all persisted registry entries"""
-    #     if context is None:
-    #         raise ValueError("Must provide a context to hold new variables")
-    #
-    #     for name in self.devices.keys():
-    #         c = self.get(name)
-    #         # This creates a variable inside the context of this name, points to class instance
-    #         setattr(context, name, c)
 
     def add(self, device):
         """Add a device class instance to the registry, with a friendly name"""

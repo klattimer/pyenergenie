@@ -1,4 +1,5 @@
 from energenie.Devices.MiHomeDevice import MiHomeDevice
+from energenie.Plugins import HandlerRegistry
 import energenie.OpenThings as OpenThings
 
 
@@ -31,10 +32,13 @@ class MIHO006(MiHomeDevice):
                 value = rec["value"]
                 if paramid == OpenThings.PARAM_VOLTAGE:
                     self.readings.battery_voltage = value
+                    HandlerRegistry.handle_reading(self.uuid, 'battery_voltage', value)
                 elif paramid == OpenThings.PARAM_CURRENT:
                     self.readings.current = value
+                    HandlerRegistry.handle_reading(self.uuid, 'current', value)
                 elif paramid == OpenThings.PARAM_APPARENT_POWER:
                     self.readings.apparent_power = value
+                    HandlerRegistry.handle_reading(self.uuid, 'apparent_power', value)
                 else:
                     try:
                         param_name = OpenThings.param_info[paramid]['n']  # name

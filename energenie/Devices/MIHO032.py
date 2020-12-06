@@ -1,4 +1,5 @@
 from energenie.Devices.MiHomeDevice import MiHomeDevice
+from energenie.Plugins import HandlerRegistry
 import energenie.OpenThings as OpenThings
 
 
@@ -38,14 +39,17 @@ class MIHO032(MiHomeDevice):
                     state = ((value is True) or (value != 0))
                     if self.readings.switch_state != state:
                         self.readings.switch_state = state
+                        HandlerRegistry.handle_reading(self.uuid, 'switch_state', state)
                         # print("MIHO032 new data %s %s" % (self.device_id, payload))
                         if self.callback is not None:
                             self.callback(self, state)
                 elif paramid == OpenThings.PARAM_ALARM:
                     if value == 0x42:  # battery alarming
                         self.readings.battery_alarm = True
+                        HandlerRegistry.handle_reading(self.uuid, 'battery_alarm', True)
                     elif value == 0x62:  # battery not alarming
                         self.readings.battery_alarm = False
+                        HandlerRegistry.handle_reading(self.uuid, 'battery_alarm', False)
                 else:
                     try:
                         param_name = OpenThings.param_info[paramid]['n']  # name

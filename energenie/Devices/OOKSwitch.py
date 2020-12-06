@@ -2,7 +2,6 @@ from energenie.Devices.LegacyDevice import LegacyDevice
 
 
 class OOKSwitch(LegacyDevice):
-    _product_name = "OOKSwitch"
     _product_rf = "OOK()"
 
     """Any OOK controlled switch"""

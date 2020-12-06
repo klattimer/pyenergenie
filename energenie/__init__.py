@@ -10,6 +10,8 @@ import time
 import argparse
 import threading
 import logging
+import json
+import math
 from queue import Queue
 
 from . import radio
@@ -17,6 +19,8 @@ from . import Devices
 from . import Registry
 from . import OpenThings
 from . import Shell
+from . import Plugins
+from .Config import Config
 
 
 def test_dummy():
@@ -34,6 +38,7 @@ class Energenie(threading.Thread):
         OpenThings.init(Devices.Device._crypt_pid)
 
         self.registry = Registry.DeviceRegistry.singleton()
+        self.handlers = Plugins.HandlerRegistry.singleton()
         self.ask_fn = self.ask
 
         # registry.list()
@@ -99,29 +104,28 @@ class Energenie(threading.Thread):
         self.running = False
         radio.finished()
 
+    def discovery_echo(self):
+        self.fsk_router.when_unknown(None)
+
     def discovery_none(self):
         self.fsk_router.when_unknown(None)
 
     def discovery_auto(self):
         Registry.AutoDiscovery(self.registry)
-        # #print("Using auto discovery")
 
     def discovery_ask(self):
         Registry.ConfirmedDiscovery(self.registry, self.ask_fn)
-        # #print("using confirmed discovery")
 
     def discovery_autojoin(self):
         Registry.JoinAutoDiscovery(self.registry)
-        # #print("using auto join discovery")
 
     def discovery_askjoin(self):
         Registry.JoinConfirmedDiscovery(self.registry, self.ask_fn)
-        # #print("using confirmed join discovery")
 
     def ask(self, address, message):
-        MSG = "Do you want to register to device: %s? " % str(address)
+        MSG = "Do you want to register the device (Y/n): %s? " % str(address)
         if message is not None:
-            print(message)
+            MSG += message
         y = input(MSG)
 
         if y == "": return True
@@ -130,20 +134,89 @@ class Energenie(threading.Thread):
         return False
 
 
+def format_report(report_data):
+    print ("Supported devices")
+    print ("--------------------------------------------------------")
+
+    indent_length = 4
+
+    for k in report_data['supported_devices'].keys():
+        l = len(k)
+        if l > indent_length:
+            indent_length = l
+    if indent_length % 4 < 2:
+        indent_length += 4
+    indent_length += 4
+    indent_length = math.ceil(indent_length / 4) * 4
+
+    for k in report_data['supported_devices'].keys():
+        l = len(k)
+        d = report_data['supported_devices'][k]
+        num_spaces = indent_length - l
+        print ("%s%sID: %d, Name: %s" % (k, ' ' * num_spaces, d['name']))
+        print ("%s%s:%s" % (' ' * indent_length, 'Description', d['description']))
+        print ("%s%s:%s\n" % (' ' * indent_length, 'Product URL', d['url']))
+        print ("%sFeatures" % (' ' * indent_length))
+        print ("%s-----------------------------------" % (' ' * indent_length))
+        for f in d['features'].keys():
+            rtype = None
+            if 'get' in d['features'][f]:
+                rtype = d['features'][f]['return']
+            print ("%s%s, %s" % (' ' * indent_length, f, rtype))
+
+    print ("\nRegistered devices")
+    print ("--------------------------------------------------------")
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--interactive", action="store_true", help="Start interactive mode")
     parser.add_argument("-d", "--discover", action="store_true", help="Start discovery mode")
+    parser.add_argument("-b", "--daemon", action="store_true", help="Start daemon mode")
+    parser.add_argument("-m", "--monitor", action="store_true", help="Start monitor mode")
     parser.add_argument("-l", "--list", action="store_true", help="List devices and capabilities")
-    parser.add_argument("-f", "--format", type=str, choices=['TERM', 'JSON', 'XML'], help="List devices and capabilities")
+    parser.add_argument("-f", "--format", type=str, choices=['TERM', 'JSON'], help="Set the format of the output")
+    parser.add_argument("-j", "--discover-mode", type=str, choices=['autojoin', 'none', 'auto', 'ask', 'askjoin'], help="Set the discovery mode")
+    parser.add_argument("-s", "--save", action="store_true", help="Save config")
     parser.add_argument("device", type=str, nargs=1, help="Select device")
 
     args = parser.parse_args()
+
+    config = Config.singleton()
+    config.load_command_line_args(args)
+
+    if args.save:
+        config.apply_command_line_args()
+
     if args.interactive:
         e = Energenie()
         Shell.EnergenieShell(e).cmdloop()
 
+    elif args.list:
+        e = Energenie()
+
+        report_data = {}
+        report_data['supported_devices'] = {k: Devices.DeviceFactory[k].describe() for k in Devices.DeviceFactory.keys()}
+        report_data['registered_devices'] = {k: e.registry.get(k).serialse() for k in e.registry.list()}
+
+        if args.format == 'JSON':
+            print(json.dumps(report_data, indent=4, sort_keys=True))
+        else:
+            print(format_report(report_data))
+
+    elif args.monitor:
+        e = Energenie()
+        e.discovery_echo()
+        e.start()
+        try:
+            while True:
+                time.sleep(10)
+        except KeyboardInterrupt:
+            print('interrupted!')
+            e.stop()
+
     elif args.discover:
+        print("Starting PyEnergenie Discovery Mode with auto-join")
         e = Energenie()
         e.discovery_autojoin()
         e.start()
@@ -152,7 +225,19 @@ def main():
                 time.sleep(10)
         except KeyboardInterrupt:
             print('interrupted!')
-        e.registry.update_config()
+            if args.save:
+                e.registry.save()
+            e.stop()
+    elif args.daemon:
+        e = Energenie()
+        e.start()
+        try:
+            while True:
+                time.sleep(10)
+        except KeyboardInterrupt:
+            if args.save:
+                e.registry.save()
+            e.stop()
 
 if __name__ == '__main__':
     main()

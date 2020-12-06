@@ -13,10 +13,6 @@ class LegacyDevice(EnergenieDevice):
         elif type(kw_args['device_id']) == tuple and kw_args['device_id'][0] is None:
             kw_args['device_id'] = (LegacyDevice.DEFAULT_HOUSE_ADDRESS, kw_args['device_id'][1])
         EnergenieDevice.__init__(self, **kw_args)
-        # TODO: These are now just be implied by the ook_interface adaptor
-        # self.radio_config.frequency  = 433.92
-        # self.radio_config.modulation = "OOK"
-        # self.radio_config.codec      = "4bit"
 
     def __repr__(self):
         return "%s(%s)" % (self.__class__.__name__, str(self.device_id))

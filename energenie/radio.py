@@ -14,7 +14,6 @@
 
 # TODO: Should really add parameter validation here, so that C code doesn't have to.
 # although it will be faster in C (C could be made optional, like an assert?)
-
 # TODO: Would like to add RSSI measurements and reporting to the metadata that
 # comes back with received packets.
 

@@ -17,8 +17,8 @@ class Device():
     _crypt_pip = 0x0100  # 256
 
     _product_id = None
-    _product_name = "Base Device Class"
-    _product_description = "Base Class used for OpenThings devices"
+    _product_name = None
+    _product_description = None
     _product_rf = None
     _product_url = None
 
@@ -120,11 +120,21 @@ class Device():
             'device_id': self.device_id,
             'name': self.name,
             'enabled': self.enabled,
+            'location': self.location,
             'uuid': self.uuid
         }
 
+    def state(self):
+        states = {}
+        features = self.features()
+        for f in features.keys():
+            if 'get' in features[f]:
+                func = getattr(self, 'get_' + f)
+                states[f] = func(self)
+        return states
+
     """A generic connected device abstraction"""
-    def __init__(self, name, device_id, enabled=True, uuid=None):
+    def __init__(self, name, device_id, enabled=True, uuid=None, location=None):
         if type(self.__class__._product_rf) == str:
             if self.__class__._product_rf.startswith('FSK'):
                 self.air_interface = DeviceFactory.fsk_interface
@@ -134,6 +144,7 @@ class Device():
                 raise Exception("Air interface is undefined for this device %s(%s):%s" % (name, str(device_id), uuid))
         self.device_id = self.parse_device_id(device_id)
         self.name = name
+        self.location = location
         self._enabled = enabled
         if uuid is None: uuid = str(uuid4())
         self.uuid = uuid
@@ -279,14 +290,16 @@ class DeviceFactory:
                 if m in self.product_model_index.keys():
                     raise Exception("Product model already registered %s" % m)
 
+                if plugin._product_name is None: continue
                 self.product_model_index[m] = plugin
 
                 if plugin._product_id is None: continue
                 if int(plugin._product_id) in self.product_id_index.keys():
                     raise Exception("Product ID already registered %d" % int(plugin._product_id))
                 self.product_id_index[int(plugin._product_id)] = plugin
+                logging.info("Device driver loaded \"%s\"" % m)
             except:
-                logging.exception("Plugin failed to load: \"%s\"" % m)
+                logging.exception("Device driver failed to load: \"%s\"" % m)
 
         self._manufacturers = list(set([self[d]._manufacturer_id for d in self.product_model_index.keys()]))
         self._manufacturers.sort()

@@ -1,4 +1,5 @@
 from energenie.Devices.MiHomeDevice import MiHomeDevice
+from energenie.Plugins import HandlerRegistry
 import energenie.OpenThings as OpenThings
 
 
@@ -30,6 +31,7 @@ class MIHO033(MiHomeDevice):
                 value = rec["value"]
                 if paramid == OpenThings.PARAM_DOOR_SENSOR:
                     self.readings.switch_state = ((value is True) or (value != 0))
+                    HandlerRegistry.handle_reading(self.uuid, 'switch_state', self.readings.switch_state)
                 else:
                     try:
                         param_name = OpenThings.param_info[paramid]['n']  # name

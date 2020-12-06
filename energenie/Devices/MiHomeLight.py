@@ -2,6 +2,11 @@ from energenie.Devices.LegacyDevice import LegacyDevice
 
 
 class MiHomeLight(LegacyDevice):
+    _product_name = "Light Switch"
+    _product_description = "Receive-only light switch"
+    _product_rf = "OOK(rx)"
+    _product_url = "https://energenie4u.co.uk/"
+    
     """Base for all MiHomeLight variants. Receive only OOK device"""
     def __init__(self, **kw_args):
         LegacyDevice.__init__(self, **kw_args)

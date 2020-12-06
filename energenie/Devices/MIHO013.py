@@ -1,4 +1,5 @@
 from energenie.Devices.MiHomeDevice import MiHomeDevice
+from energenie.Plugins import HandlerRegistry
 import energenie.OpenThings as OpenThings
 import random
 import copy
@@ -108,8 +109,8 @@ class MIHO013(MiHomeDevice):
         if len(self.send_queue) > 0:
             message = self.send_queue.pop(0)
             self.send_message(message)
-            logging.debug("MIHO013 send %s (%s)" % (self.device_id, len(self.send_queue)))
             logging.debug("Sent message %s" % str(message))
+            logging.debug("MIHO013 send %s (%s remaining)" % (self.device_id, len(self.send_queue)))
 
         # check if it's time to refresh readings
         now = time.time()
@@ -129,10 +130,13 @@ class MIHO013(MiHomeDevice):
                 logging.debug("MIHO013 new data %s %s %s" % (self.device_id, OpenThings.paramid_to_paramname(paramid), value))
                 if paramid == OpenThings.PARAM_TEMPERATURE:
                     self.readings.ambient_temperature = value
+                    HandlerRegistry.handle_reading(self.uuid, 'ambient_temperature', value)
                 if paramid == OpenThings.PARAM_VOLTAGE:
                     self.readings.battery_voltage = value
+                    HandlerRegistry.handle_reading(self.uuid, 'battery_voltage', value)
                 if paramid == OpenThings.PARAM_DIAGNOSTICS:
                     self.readings.diagnostic_flags = value
+                    HandlerRegistry.handle_reading(self.uuid, 'diagnostic_flags', value)
 
     def queue_message(self, message):
         message.set(
@@ -157,6 +161,7 @@ class MIHO013(MiHomeDevice):
 
     def set_setpoint_temperature(self, temperature: float):
         self.readings.setpoint_temperature = temperature
+        HandlerRegistry.handle_reading(self.uuid, 'setpoint_temperature', position)
         payload = OpenThings.Message(MIHO013_SET_TEMPERATURE, header=self.__class__.header()).copyof()
         if temperature < 0:
             temperature = 0
@@ -176,6 +181,7 @@ class MIHO013(MiHomeDevice):
         payload = OpenThings.Message(MIHO013_SET_VALVE_POSITION, header=self.__class__.header()).copyof()
         payload.set(recs_VALVE_POSITION_value=position)
         self._valvePosition = position
+        HandlerRegistry.handle_reading(self.uuid, 'valve_position', position)
         self.queue_message(payload)
 
     def get_valve_position(self) -> int:

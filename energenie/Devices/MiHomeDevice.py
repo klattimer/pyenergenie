@@ -31,10 +31,6 @@ class MiHomeDevice(EnergenieDevice):
     """An abstraction for Energenie new style MiHome FSK devices"""
     def __init__(self, **kw_args):
         EnergenieDevice.__init__(self, **kw_args)
-        # TODO: These are now implied by the air_interface adaptor
-        # self.radio_config.frequency  = 433.92
-        # self.radio_config.modulation = "FSK"
-        # self.radio_config.codec      = "OpenThings"
 
         # Different devices might have different PIP's
         # if we are cycling codes on each message?
@@ -78,9 +74,6 @@ class MiHomeDevice(EnergenieDevice):
         # do we call OpenThings.encode(payload) here?
         # also OpenThings.encrypt() - done by encode() as default
         if self.air_interface is not None:
-            # TODO: might want to send the config, either as a send parameter,
-            # or by calling air_interface.configure() first?
-            # No we don't, it'll delay response, we have a short window
             self.air_interface.send(payload, encoded=encoded, radio_config=self.radio_config)
 
         d = (str(self.__class__._manufacturer_id), str(self.__class__._product_id), str(self.device_id), payload)
