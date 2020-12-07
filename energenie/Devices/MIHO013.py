@@ -1,5 +1,5 @@
 from energenie.Devices.MiHomeDevice import MiHomeDevice
-from energenie.Plugins import HandlerRegistry
+from energenie.Handlers import HandlerRegistry
 import energenie.OpenThings as OpenThings
 import random
 import copy
