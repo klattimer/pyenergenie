@@ -40,7 +40,6 @@ class Config:
         self.__command_line = {}
         self.writable = None
         self.readable = None
-        self._save = False
 
         for path in search_config:
             path = os.path.expanduser(path)
@@ -66,9 +65,6 @@ class Config:
 
         self.load(self.writable)
 
-    def __del__(self):
-        self.save()
-
     def __getitem__(self, k):
         if k in self.__command_line.keys():
             return self.__command_line[k]
@@ -81,14 +77,12 @@ class Config:
         self.__preferences[k] = v
 
     def load_command_line_args(self, args):
-        if args.save:
-            self._save = True
+        pass
 
     def apply_command_line_args(self):
         pass
 
     def save(self, filename=None):
-        if self._save is False: return
         if filename is None:
             filename = self.writable
         dir = os.path.dirname(filename)

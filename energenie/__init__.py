@@ -266,5 +266,8 @@ def main():
     else:
         parser.print_usage()
 
+    if args.save:
+        config.save()
+
 if __name__ == '__main__':
     main()
