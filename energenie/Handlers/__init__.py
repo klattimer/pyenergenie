@@ -72,24 +72,28 @@ class HandlerFactory:
             module = importlib.import_module('.' + m, 'energenie.Handlers')
             try:
                 for name, obj in inspect.getmembers(module):
+                    logging.debug(obj.__name__)
                     if not inspect.isclass(obj):
+                        logging.debug("Is not class")
                         continue
 
                     if not issubclass(obj, Handler):
+                        logging.debug("Is not handler subclass")
                         continue
 
                     if obj.__name__ == Handler:
+                        logging.debug("Is handler")
                         continue
                     class_name = obj.__name__
                     plugin = getattr(module, class_name)
-                    logging.info("Identified plugin %s" % class_name)
+                    logging.debug("Identified plugin %s" % class_name)
 
                     if class_name in self.handlers.keys():
-                        logging.info("Plugin already registered %s" % class_name)
+                        logging.debug("Plugin already registered %s" % class_name)
                         continue
 
                     self.handlers[class_name] = plugin
-                    logging.info("Plugin loaded \"%s\"" % class_name)
+                    logging.debug("Plugin loaded \"%s\"" % class_name)
             except:
                 logging.exception("Plugin failed to load: \"%s\"" % class_name)
 
