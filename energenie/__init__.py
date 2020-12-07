@@ -192,6 +192,7 @@ def format_report(report_data):
 
 
 def main():
+    logging.basicConfig(level=logging.DEBUG)
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--interactive", action="store_true", help="Start interactive mode")
     parser.add_argument("-d", "--discover", action="store_true", help="Start discovery mode")
@@ -272,5 +273,4 @@ def main():
         config.save()
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
     main()
