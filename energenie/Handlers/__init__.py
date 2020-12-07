@@ -72,7 +72,7 @@ class HandlerFactory:
             module = importlib.import_module('.' + m, 'energenie.Handlers')
             try:
                 for name, obj in inspect.getmembers(module):
-                    logging.debug(obj.__name__)
+                    logging.debug(name)
                     if not inspect.isclass(obj):
                         logging.debug("Is not class")
                         continue
