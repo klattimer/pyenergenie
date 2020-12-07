@@ -7,6 +7,7 @@ class MQTTHandler(Handler):
     _description = 'Mosquitto Handler'
     _args = {
         'host': 'str',
+        'port': 'int',
         'username': 'str',
         'password': 'str',
         'topic_prefix': 'str'
@@ -24,6 +25,12 @@ class MQTTHandler(Handler):
         super.__init__(self, **kw_args)
 
         reg = Registry.DeviceRegistry.singleton()
+
+        self.username = kw_args.get('username')
+        self.password = kw_args.get('password')
+        self.host = kw_args.get('host')
+        self.port = kw_args.get('port')
+        self.topic_prefix = kw_args.get('topic_prefix')
 
         for d in reg.list():
             device = reg[d]
@@ -43,17 +50,18 @@ class MQTTHandler(Handler):
         # Set the device states according to the MQTT values, if setters exist for the values
         # Publish information about this system
         # - IP address
-        # - Available handlers 
+        # - Available handlers
         # - Supported devices
         pass
 
     def serialise(self):
         data = super.serialise()
         data.update({
-            'type': self.__class__.__name__,
             'host': self.host,
             'username': self.username,
-            'password': self.password
+            'password': self.password,
+            'port': self.port,
+            'topic_prefix': self.topic_prefix
         })
         return data
 

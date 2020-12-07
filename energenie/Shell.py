@@ -1,7 +1,32 @@
 from cmd import Cmd
 from energenie.Devices import DeviceFactory
-import time
+import time, math
 import sys, select
+
+
+#
+# FIXME: This should be moved to a utils collection, as with other
+# dump functions like registered devices and event monitoring
+#
+def describe_device(device):
+    l = len(device['name'])
+    indent_length = 4
+    if indent_length % 4 < 2:
+        indent_length += 4
+    indent_length += 4
+    indent_length = math.ceil(indent_length / 4) * 4
+
+    num_spaces = indent_length - l
+    print ("%s%sID: %d, Name: %s" % (device['id'], ' ' * num_spaces, device['name']))
+    print ("%s%s: %s" % (' ' * indent_length, 'Description', device['description']))
+    print ("%s%s: %s\n" % (' ' * indent_length, 'Product URL', device['url']))
+    print ("%sFeatures" % (' ' * indent_length))
+    print ("%s-----------------------------------" % (' ' * indent_length))
+    for f in device['features'].keys():
+        rtype = None
+        if 'get' in device['features'][f]:
+            rtype = device['features'][f]['return']
+        print ("%s%s, %s" % (' ' * indent_length, f, rtype))
 
 
 class EnergenieShell(Cmd):
@@ -48,17 +73,26 @@ class EnergenieShell(Cmd):
         """
         Discover and register new devices
         """
+        self.energenie.discover(mode)
         self.energenie.start()
 
     def do_describe(self, device):
         """
         Describe a device's capabilities
         """
-        print ("Not yet implemented")
+        device_description = DeviceFactory[device].describe()
+        describe_device(device_description)
 
     def do_learn(self):
         """
         Learn OOK signals from transmitters
+
+        Set the device to listen OOK mode and collect signals
+        The goal is to decode a reasonable approximation of the
+        transmitted bytes, such that it can then be correlated
+        with the appropriate device type.
+
+        This appears to require implementation in radio.c/radio.py to be completed
         """
         print ("Not yet implemented")
 
@@ -94,6 +128,28 @@ class EnergenieShell(Cmd):
                 return
 
         self.energenie.registry.add(device)
+
+    def do_monitor(self):
+        """
+        Monitor incoming sensor readings
+        """
+        self.energenie.discover("ECHO")
+        self.energenie.start()
+
+        # TODO: Configure a handler to output received events
+        # to the terminal, and disable other handlers
+        try:
+            while True:
+                time.sleep(10)
+        except KeyboardInterrupt:
+            print('interrupted!')
+            self.energenie.stop()
+
+    def do_add_handler(self, type):
+        """
+        Add a handler
+        """
+        # Enters into a sub-command loop for setting handler properties
 
     def do_exit(self):
         """

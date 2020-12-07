@@ -19,13 +19,30 @@ from . import Devices
 from . import Registry
 from . import OpenThings
 from . import Shell
-from . import Plugins
+from . import Handlers
 from .Config import Config
+from enum import Enum
 
 
 def test_dummy():
     """Dummy to quiet pytest for now"""
     assert True
+
+
+class DiscoveryMode(Enum):
+    ECHO = 1            # Echo signals that are received
+    AUTO = 2            # Automatically add devices that are seen
+    ASK = 3             # Ask the user if they wish to add the device
+    AUTOJOIN = 4        # Automatically respond with acknowledment
+    ASKJOIN = 5         # Respond with acknowledment when user agrees
+
+    @classmethod
+    def get(cls, name):
+        return cls.__members__[name]
+
+    @classmethod
+    def list(cls):
+        return [name for name in cls.__members__.keys()]
 
 
 class Energenie(threading.Thread):
@@ -38,18 +55,8 @@ class Energenie(threading.Thread):
         OpenThings.init(Devices.Device._crypt_pid)
 
         self.registry = Registry.DeviceRegistry.singleton()
-        self.handlers = Plugins.HandlerRegistry.singleton()
+        self.handlers = Handlers.HandlerRegistry.singleton()
         self.ask_fn = self.ask
-
-        # registry.list()
-
-        # Default discovery mode, unless changed by app
-        # #discovery_none()
-        # #discovery_auto()
-        # #discovery_ask(ask)
-        # discovery_autojoin()
-        # #discovery_askjoin(ask)
-        # self.discovery_auto()
 
     def __del__(self):
         self.stop()
@@ -90,9 +97,7 @@ class Energenie(threading.Thread):
         super().start()
 
     def run(self):
-        #
-        #
-        # TODO: Set up logging here
+        # IMPROVE: Set up logging here
         logging.basicConfig(level=logging.DEBUG)
         while self.running is True:
             self.loop()
@@ -104,23 +109,20 @@ class Energenie(threading.Thread):
         self.running = False
         radio.finished()
 
-    def discovery_echo(self):
-        self.fsk_router.when_unknown(None)
+    def discover(self, mode):
+        if type(mode) == str:
+            mode = DiscoveryMode.get(mode)
 
-    def discovery_none(self):
-        self.fsk_router.when_unknown(None)
-
-    def discovery_auto(self):
-        Registry.AutoDiscovery(self.registry)
-
-    def discovery_ask(self):
-        Registry.ConfirmedDiscovery(self.registry, self.ask_fn)
-
-    def discovery_autojoin(self):
-        Registry.JoinAutoDiscovery(self.registry)
-
-    def discovery_askjoin(self):
-        Registry.JoinConfirmedDiscovery(self.registry, self.ask_fn)
+        if mode == DiscoveryMode.ECHO:
+            self.fsk_router.when_unknown(None)
+        elif mode == DiscoveryMode.AUTO:
+            Registry.AutoDiscovery(self.registry)
+        elif mode == DiscoveryMode.ASK:
+            Registry.ConfirmedDiscovery(self.registry, self.ask_fn)
+        elif mode == DiscoveryMode.AUTOJOIN:
+            Registry.JoinAutoDiscovery(self.registry)
+        elif mode == DiscoveryMode.ASKJOIN:
+            Registry.JoinConfirmedDiscovery(self.registry, self.ask_fn)
 
     def ask(self, address, message):
         MSG = "Do you want to register the device (Y/n): %s? " % str(address)
@@ -154,8 +156,8 @@ def format_report(report_data):
         d = report_data['supported_devices'][k]
         num_spaces = indent_length - l
         print ("%s%sID: %d, Name: %s" % (k, ' ' * num_spaces, d['name']))
-        print ("%s%s:%s" % (' ' * indent_length, 'Description', d['description']))
-        print ("%s%s:%s\n" % (' ' * indent_length, 'Product URL', d['url']))
+        print ("%s%s: %s" % (' ' * indent_length, 'Description', d['description']))
+        print ("%s%s: %s\n" % (' ' * indent_length, 'Product URL', d['url']))
         print ("%sFeatures" % (' ' * indent_length))
         print ("%s-----------------------------------" % (' ' * indent_length))
         for f in d['features'].keys():
@@ -167,6 +169,25 @@ def format_report(report_data):
     print ("\nRegistered devices")
     print ("--------------------------------------------------------")
 
+    for k in report_data['registered_devices'].keys():
+        l = len(k)
+        if l > indent_length:
+            indent_length = l
+    if indent_length % 4 < 2:
+        indent_length += 4
+    indent_length += 4
+    indent_length = math.ceil(indent_length / 4) * 4
+
+    for k in report_data['registered_devices'].keys():
+        l = len(k)
+        d = report_data['registered_devices'][k]
+        num_spaces = indent_length - l
+        print ("%s%sModel: %s" % (k, ' ' * num_spaces, d['type']))
+        print ("%s%s:%s" % (' ' * indent_length, 'UUID', d['uuid']))
+        print ("%s%s:%s" % (' ' * indent_length, 'Device ID', d['device_id']))
+        print ("%s%s:%s" % (' ' * indent_length, 'Location', str(d['location'])))
+        print ("%s%s:%s" % (' ' * indent_length, 'Enabled', str(d['enabled'])))
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -176,7 +197,7 @@ def main():
     parser.add_argument("-m", "--monitor", action="store_true", help="Start monitor mode")
     parser.add_argument("-l", "--list", action="store_true", help="List devices and capabilities")
     parser.add_argument("-f", "--format", type=str, choices=['TERM', 'JSON'], help="Set the format of the output")
-    parser.add_argument("-j", "--discover-mode", type=str, choices=['autojoin', 'none', 'auto', 'ask', 'askjoin'], help="Set the discovery mode")
+    parser.add_argument("-j", "--discover-mode", type=str, choices=DiscoveryMode.list(), help="Set the discovery mode")
     parser.add_argument("-s", "--save", action="store_true", help="Save config")
     parser.add_argument("device", type=str, nargs=1, help="Select device")
 
@@ -197,7 +218,7 @@ def main():
 
         report_data = {}
         report_data['supported_devices'] = {k: Devices.DeviceFactory[k].describe() for k in Devices.DeviceFactory.keys()}
-        report_data['registered_devices'] = {k: e.registry.get(k).serialse() for k in e.registry.list()}
+        report_data['registered_devices'] = {k: e.registry.get(k).serialise() for k in e.registry.list()}
 
         if args.format == 'JSON':
             print(json.dumps(report_data, indent=4, sort_keys=True))
@@ -205,8 +226,9 @@ def main():
             print(format_report(report_data))
 
     elif args.monitor:
+        print("Starting PyEnergenie Monitor Mode")
         e = Energenie()
-        e.discovery_echo()
+        e.discover("ECHO")
         e.start()
         try:
             while True:
@@ -218,7 +240,10 @@ def main():
     elif args.discover:
         print("Starting PyEnergenie Discovery Mode with auto-join")
         e = Energenie()
-        e.discovery_autojoin()
+        if args.discover_mode:
+            e.discover(args.discover_mode)
+        else:
+            e.discover(DiscoveryMode.AUTOJOIN)
         e.start()
         try:
             while True:

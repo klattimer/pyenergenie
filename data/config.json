@@ -8,19 +8,27 @@
         "CS": 7,
         "RESET": 25
     },
-    "mqtt": {
-        "host": "192.168.1.1",
-        "port": 1172,
-        "username": "energenie",
-        "password": "secret"
-    },
-    "webhooks": [
-        {
+    "handlers": {
+        "MosquittoServer": {
+            "type": "MQTTHandler",
+            "host": "192.168.1.1",
+            "port": 1172,
+            "username": "energenie",
+            "password": "secret",
+            "topic_prefix": "energenie"
+        },
+        "WebEventReceiver": {
+            "type": "HTTPWebEvent",
             "url": "https://192.168.1.1/my/endpoint",
-            "authorization_token": "token",
+            "headers": {
+                "authorization_token": "token"
+            },
             "format": "JSON"
+        },
+        "WebSocketChannel": {
+            "type": "WebSocketHandler"
         }
-    ],
+    },
     "devices": [
         {
             "name": "Master Bedroom eTRV",
