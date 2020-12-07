@@ -78,7 +78,7 @@ class HandlerFactory:
                     if not issubclass(obj, Handler):
                         continue
 
-                    if name == Handler:
+                    if name == "Handler":
                         continue
 
                     plugin = getattr(module, name)
