@@ -214,11 +214,10 @@ def main():
         Shell.EnergenieShell(e).cmdloop()
 
     elif args.list:
-        e = Energenie()
-
+        registry = Registry.DeviceRegistry.singleton()
         report_data = {}
         report_data['supported_devices'] = {k: Devices.DeviceFactory[k].describe() for k in Devices.DeviceFactory.keys()}
-        report_data['registered_devices'] = {k: e.registry.get(k).serialise() for k in e.registry.list()}
+        report_data['registered_devices'] = {k: registry.get(k).serialise() for k in registry.list()}
 
         if args.format == 'JSON':
             print(json.dumps(report_data, indent=4, sort_keys=True))
