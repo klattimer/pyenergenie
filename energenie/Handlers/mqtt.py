@@ -13,14 +13,6 @@ class MQTTHandler(Handler):
         'topic_prefix': 'str'
     }
 
-    @classmethod
-    def describe(cls):
-        return {
-            'protocol': cls._protocol,
-            'description': cls._description,
-            'args': cls._args
-        }
-
     def __init__(self, **kw_args):
         super.__init__(self, **kw_args)
 
