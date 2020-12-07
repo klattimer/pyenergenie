@@ -119,7 +119,11 @@ class HandlerRegistry:
             if handler_args.get('enabled') is not True:
                 continue
             handler = self.__handler_factory[class_name](**handler_args)
-            self._handlers[handler_args['name']](handler)
+            self._handlers[handler_args['name']] = handler
+
+    def add(self, class_name, **kw_args):
+        handler = self.__handler_factory[class_name](**kw_args)
+        self._handlers[*kw_args['name']] = handler
 
     def _handle_reading(self, device, key, value):
         logging.debug("Handling message 2")
