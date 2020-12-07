@@ -98,7 +98,7 @@ class Energenie(threading.Thread):
 
     def run(self):
         # IMPROVE: Set up logging here
-        logging.basicConfig(level=logging.DEBUG)
+        logging.basicConfig(filename='~/.pyenergenie/pyenergenie.log', encoding='utf-8', level=logging.DEBUG)
         while self.running is True:
             self.loop()
 
@@ -114,7 +114,7 @@ class Energenie(threading.Thread):
             mode = DiscoveryMode.get(mode)
 
         if mode == DiscoveryMode.ECHO:
-            self.fsk_router.when_unknown(None)
+            self.registry.fsk_router.when_unknown(None)
         elif mode == DiscoveryMode.AUTO:
             Registry.AutoDiscovery(self.registry)
         elif mode == DiscoveryMode.ASK:
