@@ -98,7 +98,7 @@ class Energenie(threading.Thread):
 
     def run(self):
         # IMPROVE: Set up logging here
-        logging.basicConfig(filename='~/.pyenergenie/pyenergenie.log', encoding='utf-8', level=logging.DEBUG)
+        logging.basicConfig(filename='~/.pyenergenie/pyenergenie.log', encoding='utf-8', level=logging.INFO)
         while self.running is True:
             self.loop()
 

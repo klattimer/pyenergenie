@@ -1,5 +1,5 @@
 import os
-import importlib
+import importlib, inspect
 import logging
 from ..Config import Config
 
@@ -71,14 +71,17 @@ class HandlerFactory:
             m = f.replace('.py', '')
             module = importlib.import_module('.' + m, 'energenie.Handlers')
             try:
-                plugin = getattr(module, m)
+                for name, obj in inspect.getmembers(module):
+                    if inspect.isclass(obj):
+                        class_name = obj.__name__
+                        plugin = getattr(module, class_name)
 
-                if m in self.handlers.keys():
-                    raise Exception("Plugin already registered %s" % m)
+                    if class_name in self.handlers.keys():
+                        raise Exception("Plugin already registered %s" % m)
 
-                self.handlers[m] = plugin
+                    self.handlers[class_name] = plugin
 
-                logging.info("Plugin loaded \"%s\"" % m)
+                    logging.info("Plugin loaded \"%s\"" % class_name)
             except:
                 logging.exception("Plugin failed to load: \"%s\"" % m)
 
