@@ -131,12 +131,14 @@ class MIHO013(MiHomeDevice):
                 if paramid == OpenThings.PARAM_TEMPERATURE:
                     self.readings.ambient_temperature = value
                     HandlerRegistry.handle_reading(self.uuid, 'ambient_temperature', value)
-                if paramid == OpenThings.PARAM_VOLTAGE:
+                elif paramid == OpenThings.PARAM_VOLTAGE:
                     self.readings.battery_voltage = value
                     HandlerRegistry.handle_reading(self.uuid, 'battery_voltage', value)
-                if paramid == OpenThings.PARAM_DIAGNOSTICS:
+                elif paramid == OpenThings.PARAM_DIAGNOSTICS:
                     self.readings.diagnostic_flags = value
                     HandlerRegistry.handle_reading(self.uuid, 'diagnostic_flags', value)
+                else:
+                    logging.debug("Unhandled param id %s" % str(paramid))
 
     def queue_message(self, message):
         message.set(
