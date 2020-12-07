@@ -1,4 +1,4 @@
-from energenie.Plugins import Handler
+from energenie.Handlers import Handler
 from energenie import Registry
 
 
