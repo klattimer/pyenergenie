@@ -164,7 +164,7 @@ class Device():
     @staticmethod
     def parse_device_id(device_id):
         """device_id could be a number, a hex string or a decimal string"""
-        logging.debug("**** parsing: %s" % str(device_id))
+        # logging.debug("**** parsing: %s" % str(device_id))
         if device_id is None:
             raise ValueError("device_id is None, not allowed")
 
@@ -300,7 +300,7 @@ class DeviceFactory:
                 self.product_id_index[int(plugin._product_id)] = plugin
                 logging.info("Device driver loaded \"%s\"" % m)
             except:
-                logging.exception("Device driver failed to load: \"%s\"" % m)
+                logging.debug("Device driver failed to load: \"%s\"" % m)
 
         self._manufacturers = list(set([self[d]._manufacturer_id for d in self.product_model_index.keys()]))
         self._manufacturers.sort()
