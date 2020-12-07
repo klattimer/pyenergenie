@@ -14,7 +14,7 @@ class MQTTHandler(Handler):
     }
 
     def __init__(self, **kw_args):
-        super.__init__(self, **kw_args)
+        super(MQTTHandler, self).__init__(**kw_args)
 
         reg = Registry.DeviceRegistry.singleton()
 
