@@ -157,7 +157,7 @@ def format_report(report_data):
         num_spaces = indent_length - l
         print ("%s%sName: %s" % (k, ' ' * num_spaces, d['name']))
         print ("%s%s: %s" % (' ' * indent_length, 'Manufacturer ID', d['manufacturer_id']))
-        print ("%s%s: %s" % (' ' * indent_length, 'Product ID', d['Product_id']))
+        print ("%s%s: %s" % (' ' * indent_length, 'Product ID', d['product_id']))
         print ("%s%s: %s" % (' ' * indent_length, 'Description', d['description']))
         print ("%s%s: %s\n" % (' ' * indent_length, 'Product URL', d['url']))
         print ("%sFeatures" % (' ' * indent_length))
