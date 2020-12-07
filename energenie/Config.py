@@ -57,10 +57,11 @@ class Config:
             if self.readable and self.writable:
                 break
 
-        if self.writable != self.readable:
+        if self.readable and self.writable != self.readable:
             self.load(self.readable)
 
-        self.load(self.writable)
+        if self.writable:
+            self.load(self.writable)
 
     def __getitem__(self, k):
         if k in self.__command_line.keys():
