@@ -40,7 +40,7 @@ class Config:
         self.__command_line = {}
         self.writable = None
         self.readable = None
-        self.save = False
+        self._save = False
 
         for path in search_config:
             path = os.path.expanduser(path)
@@ -82,13 +82,13 @@ class Config:
 
     def load_command_line_args(self, args):
         if args.save:
-            self.save = True
+            self._save = True
 
     def apply_command_line_args(self):
         pass
 
     def save(self, filename=None):
-        if self.save is False: return
+        if self._save is False: return
         if filename is None:
             filename = self.writable
         dir = os.path.dirname(filename)
