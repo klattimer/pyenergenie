@@ -12,7 +12,6 @@ from copy import copy
 from . import Devices
 from energenie.Devices.MiHomeDevice import MiHomeDevice
 from . import OpenThings
-from .Plugins import HandlerFactory
 
 
 search_config = [
