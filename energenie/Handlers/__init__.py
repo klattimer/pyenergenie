@@ -78,14 +78,17 @@ class HandlerFactory:
                     if not issubclass(obj, Handler):
                         continue
 
+                    if obj.__name__ == Handler:
+                        continue
                     class_name = obj.__name__
                     plugin = getattr(module, class_name)
+                    logging.info("Identified plugin %s" % class_name)
 
                     if class_name in self.handlers.keys():
-                        raise Exception("Plugin already registered %s" % class_name)
+                        logging.info("Plugin already registered %s" % class_name)
+                        continue
 
                     self.handlers[class_name] = plugin
-
                     logging.info("Plugin loaded \"%s\"" % class_name)
             except:
                 logging.exception("Plugin failed to load: \"%s\"" % class_name)
