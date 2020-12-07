@@ -15,6 +15,19 @@ search_config = [
 
 class Config:
     __single = None
+    __defaults = {
+        "radio": {
+            "type": "RFM69HCW",
+            "frequency": "434.30 MHz",
+            "MOSI": 10,
+            "MISO": 9,
+            "SCLK": 11,
+            "CS": 7,
+            "RESET": 25
+        },
+        "handlers": {},
+        "devices": []
+    }
 
     @classmethod
     def singleton(cls):
@@ -23,10 +36,11 @@ class Config:
         return cls.__single
 
     def __init__(self):
-        self.__preferences = {}
+        self.__preferences = copy(self.__defaults)
         self.__command_line = {}
         self.writable = None
         self.readable = None
+        self.save = False
 
         for path in search_config:
             path = os.path.expanduser(path)
@@ -67,12 +81,14 @@ class Config:
         self.__preferences[k] = v
 
     def load_command_line_args(self, args):
-        pass
+        if args.save:
+            self.save = True
 
     def apply_command_line_args(self):
         pass
 
     def save(self, filename=None):
+        if self.save is False: return
         if filename is None:
             filename = self.writable
         dir = os.path.dirname(filename)
@@ -82,5 +98,6 @@ class Config:
             f.write(json.dumps(self.__preferences, indent=4, sort_keys=True))
 
     def load(self, filename):
-        with open(filename) as f:
-            self.__preferences = json.loads(f.read())
+        if os.path.exists(filename):
+            with open(filename) as f:
+                self.__preferences = json.loads(f.read())

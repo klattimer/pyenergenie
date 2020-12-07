@@ -263,6 +263,8 @@ def main():
             if args.save:
                 e.registry.save()
             e.stop()
+    else:
+        parser.print_usage()
 
 if __name__ == '__main__':
     main()
