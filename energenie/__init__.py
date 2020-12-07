@@ -155,7 +155,9 @@ def format_report(report_data):
         l = len(k)
         d = report_data['supported_devices'][k]
         num_spaces = indent_length - l
-        print ("%s%sID: %s, Name: %s" % (k, ' ' * num_spaces, d['id'], d['name']))
+        print ("%s%sName: %s" % (k, ' ' * num_spaces, d['name']))
+        print ("%s%s: %s" % (' ' * indent_length, 'Manufacturer ID', d['manufacturer_id']))
+        print ("%s%s: %s" % (' ' * indent_length, 'Product ID', d['Product_id']))
         print ("%s%s: %s" % (' ' * indent_length, 'Description', d['description']))
         print ("%s%s: %s\n" % (' ' * indent_length, 'Product URL', d['url']))
         print ("%sFeatures" % (' ' * indent_length))
@@ -163,7 +165,7 @@ def format_report(report_data):
         for f in d['features'].keys():
             rtype = None
             if 'get' in d['features'][f]:
-                rtype = d['features'][f]['return']
+                rtype = d['features'][f]['get']['return']
             print ("%s%s, %s" % (' ' * indent_length, f, rtype))
 
     print ("\nRegistered devices")

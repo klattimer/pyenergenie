@@ -93,7 +93,8 @@ class Device():
     def describe(cls):
         return {
             'type': cls.__name__,
-            'id': cls._product_id,
+            'manufacturer_id': cls._manufacturer_id,
+            'product_id': cls._product_id,
             'name': cls._product_name,
             'description': cls._product_description,
             'rf': cls._product_rf,
