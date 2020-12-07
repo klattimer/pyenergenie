@@ -6,10 +6,7 @@ import logging
 search_config = [
     "/etc/pyenergenie/config.json",
     "/opt/venvs/pyenergenie/config/config.json",
-    "~/.pyenergenie/config.json",
-
-    # This is for testing only
-    # "data/config.json"
+    "~/.pyenergenie/config.json"
 ]
 
 
