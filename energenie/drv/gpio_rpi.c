@@ -1,5 +1,5 @@
 /* gpio.c  D.J.Whale  8/07/2014
- * 
+ *
  * A very simple interface to the GPIO port on the Raspberry Pi.
  */
 
@@ -18,7 +18,10 @@
 
 /***** CONSTANTS *****/
 
-#define BCM2708_PERI_BASE        0x20000000
+#define BCM2708_PERI_BASE        0x3F000000
+
+//#define BCM2708_PERI_BASE        0x20000000
+
 //#define GPIO_BASE                (BCM2708_PERI_BASE + 0x200000) /* GPIO controller */
 #define GPIO_BASE_OFFSET           0x200000
 
@@ -74,7 +77,7 @@ void gpio_init()
 
 
    /* open /dev/mem */
-   if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) 
+   if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0)
    {
       printf("can't open /dev/mem \n");
       exit(-1); //TODO return a result code
@@ -92,7 +95,7 @@ void gpio_init()
 
    close(mem_fd); //No need to keep mem_fd open after mmap
 
-   if (gpio_map == MAP_FAILED) 
+   if (gpio_map == MAP_FAILED)
    {
       printf("mmap error %d\n", (int)gpio_map);//errno also set!
       exit(-1); //TODO return a result code
