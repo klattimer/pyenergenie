@@ -199,7 +199,7 @@ def main():
     parser.add_argument("-f", "--format", type=str, choices=['TERM', 'JSON'], help="Set the format of the output")
     parser.add_argument("-j", "--discover-mode", type=str, choices=DiscoveryMode.list(), help="Set the discovery mode")
     parser.add_argument("-s", "--save", action="store_true", help="Save config")
-    parser.add_argument("device", type=str, nargs=1, help="Select device")
+    parser.add_argument("device", type=str, nargs='?', help="Select device")
 
     args = parser.parse_args()
 
