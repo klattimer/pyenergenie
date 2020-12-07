@@ -97,7 +97,7 @@ class HandlerRegistry:
 
     @classmethod
     def handle_reading(cls, device, key, value):
-        cls.singleton()._handle_reading(key, value)
+        cls.singleton()._handle_reading(device, key, value)
 
     def __init__(self):
         # Load settings from config
