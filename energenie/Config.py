@@ -9,7 +9,7 @@ search_config = [
     "~/.pyenergenie/config.json",
 
     # This is for testing only
-    "data/config.json"
+    # "data/config.json"
 ]
 
 
