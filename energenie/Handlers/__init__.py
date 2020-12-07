@@ -69,7 +69,7 @@ class HandlerFactory:
             if f.startswith("__"): continue
             if not f.endswith(".py"): continue
             m = f.replace('.py', '')
-            module = importlib.import_module('.' + m, 'energenie.Plugins')
+            module = importlib.import_module('.' + m, 'energenie.Handlers')
             try:
                 plugin = getattr(module, m)
 
