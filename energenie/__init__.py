@@ -166,7 +166,8 @@ def format_report(report_data):
             rtype = None
             if 'get' in d['features'][f]:
                 rtype = d['features'][f]['get']['return']
-            print ("%s%s, %s" % (' ' * indent_length, f, rtype))
+            print ("%s%s: %s" % (' ' * indent_length, f, rtype))
+        print("\n")
 
     print ("\nRegistered devices")
     print ("--------------------------------------------------------")
