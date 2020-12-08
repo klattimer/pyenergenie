@@ -113,15 +113,16 @@ class HandlerRegistry:
         self.__handler_factory = HandlerFactory.singleton()
         handlers = Config.singleton()['handlers']
         self._handlers = {}
-        for (class_name, handler_args) in handlers.values():
+        for (name, handler_args) in handlers.values():
             if handler_args.get('enabled') is not True:
                 continue
-            handler = self.__handler_factory[class_name](**handler_args)
-            self._handlers[handler_args['name']] = handler
+            handler = self.__handler_factory[handler_args['type']](**handler_args)
+            logging.debug("Adding handler: " + name)
+            self._handlers[name] = handler
 
-    def add(self, class_name, **kw_args):
-        handler = self.__handler_factory[class_name](**kw_args)
-        self._handlers[kw_args['name']] = handler
+    def add(self, name, **kw_args):
+        handler = self.__handler_factory[kw_args['type']](**kw_args)
+        self._handlers[name] = handler
 
     def _handle_reading(self, device, key, value):
         logging.debug("Handling message 2")
