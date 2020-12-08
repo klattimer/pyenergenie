@@ -41,7 +41,7 @@ class MiHomeDevice(EnergenieDevice):
         return "%s(%s,%s,%s)" % (self.__class__.__name__, str(self.__class__._manufacturer_id), str(self.__class__._product_id), str(self.device_id))
 
     @classmethod
-    def get_join_req(cls, mfrid, productid, deviceid):
+    def join_req(cls, mfrid, productid, deviceid):
         """Used for testing, synthesises a JOIN_REQ message from this device"""
         msg = OpenThings.Message(JOIN_REQ, header=cls.header())
         msg["header_mfrid"]     = mfrid

@@ -40,9 +40,9 @@ class MIHO005(MiHomeDevice):
         self.radio_config.inner_times = 4
 
     @staticmethod
-    def get_join_req(deviceid):
+    def join_req(deviceid):
         """Get a synthetic join request from this device, for testing"""
-        return MiHomeDevice.get_join_req(MIHO005._manufacturer_id, MIHO005._product_id, deviceid)
+        return MiHomeDevice.join_req(MIHO005._manufacturer_id, MIHO005._product_id, deviceid)
 
     def handle_message(self, payload):
         # print("MIHO005 new data %s %s" % (self.device_id, payload))
