@@ -1,8 +1,6 @@
 from energenie.Handlers import Handler
 from energenie import Registry
 import paho.mqtt.client as mqtt
-import Threading
-from queue import Queue
 import logging
 
 
