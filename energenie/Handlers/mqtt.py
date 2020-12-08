@@ -35,7 +35,7 @@ class MQTTHandler(Handler):
         self.client.loop_start()
 
         for d in reg.list():
-            device = reg[d]
+            device = reg.get(d)
             features = device.features()
             for f in features.keys():
                 topic = ['', self.topic_prefix, d, f]
