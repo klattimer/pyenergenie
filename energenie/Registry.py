@@ -29,7 +29,6 @@ class DeviceRegistry():
         # # print("***Opening DeviceRegistry")
         self.devices = {}
         self.device_ids = {}
-        self.device_name_uuid = {}
         self.fsk_router = Router("fsk")
 
         # OOK receive not yet written
@@ -55,7 +54,6 @@ class DeviceRegistry():
     def add(self, device):
         """Add a device class instance to the registry, with a friendly name"""
         self.devices[device.uuid] = device
-        self.device_name_uuid[device.name] = device.uuid
         self.device_ids[device.device_id] = device.uuid
 
         if device.enabled is True:
@@ -72,16 +70,12 @@ class DeviceRegistry():
         if name in self.device_ids.keys():
             return self.devices[self.device_ids[name]]
 
-        # Name get
-        return self.devices[self.device_name_uuid[name]]
-
     def delete(self, name):
         """Delete the named class instance"""
         device = self.get(name)
         if device.enabled is True:
             self.remove_device_routing(device)
         del(self.devices[device.uuid])
-        del(self.device_name_uuid[device.name])
 
     def list(self):
         """List the devices by name"""

@@ -38,12 +38,14 @@ class MQTTHandler(Handler):
             device = self.registry.get(d)
             topic = '/'.join([self.topic_prefix, device.location if device.location else "default", device.uuid, "name"])
             self.client.publish(topic, device.name)
+            topic = '/'.join([self.topic_prefix, device.location if device.location else "default", device.uuid, "type"])
+            self.client.publish(topic, device.__class__.__name__)
+            topic = '/'.join([self.topic_prefix, device.location if device.location else "default", device.uuid, "id"])
+            self.client.publish(topic, device.device_id)
 
             features = device.features()
             for f in features.keys():
                 topic = '/'.join([self.topic_prefix, device.location if device.location else "default", device.uuid, f])
-                logging.debug(f)
-                logging.debug(str(features[f].keys()))
                 if 'get' in features[f]:
                     # Create the MQTT topic and push the current value
                     value = getattr(device, 'get_' + f)()
