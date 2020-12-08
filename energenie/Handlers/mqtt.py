@@ -48,6 +48,7 @@ class MQTTHandler(Handler):
                     # Create the MQTT topic and push the current value
                     value = getattr(device, 'get_' + f)()
                     logging.debug(f"Initialising MQTT topic {topic} value: {value}")
+                    if value is None: value = False
                     self.client.publish(topic, value)
                 elif 'set' in features[f]:
                     self.client.publish(topic, False)
