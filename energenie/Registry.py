@@ -81,11 +81,12 @@ class DeviceRegistry():
             filename = find_config()
         with open(filename) as f:
             self.config = json.loads(f.read())
-            for device in self.config['devices']:
-                model = device['type']
-                del(device['type'])
-                d = Devices.DeviceFactory.get_device_from_model(model, **device)
-                self.add(d)
+            if 'devices' in self.config.keys():
+                for device in self.config['devices']:
+                    model = device['type']
+                    del(device['type'])
+                    d = Devices.DeviceFactory.get_device_from_model(model, **device)
+                    self.add(d)
 
     def save(self, filename=None):
         devices = []
