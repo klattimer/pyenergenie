@@ -113,7 +113,7 @@ class HandlerRegistry:
         self.__handler_factory = HandlerFactory.singleton()
         handlers = Config.singleton()['handlers']
         self._handlers = {}
-        for (name, handler_args) in handlers.values():
+        for (name, handler_args) in handlers.items():
             if handler_args.get('enabled') is not True:
                 continue
             handler = self.__handler_factory[handler_args['type']](**handler_args)
