@@ -49,6 +49,8 @@ class MQTTHandler(Handler):
                     value = getattr(device, 'get_' + f)()
                     logging.debug(f"Initialising MQTT topic {topic} value: {value}")
                     self.client.publish(topic, value)
+                elif 'set' in features[f]:
+                    self.client.publish(topic, False)
 
                 if 'set' in features[f]:
                     # Subscribe to setter topic, retrieve the current value

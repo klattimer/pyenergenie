@@ -239,6 +239,8 @@ def main():
                 time.sleep(10)
         except KeyboardInterrupt:
             print('interrupted!')
+            if args.save:
+                e.registry.save()
             e.stop()
 
     elif args.discover:
