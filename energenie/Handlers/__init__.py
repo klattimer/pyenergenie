@@ -105,7 +105,6 @@ class HandlerRegistry:
 
     @classmethod
     def handle_reading(cls, device, key, value):
-        logging.debug("Handling message 1")
         cls.singleton()._handle_reading(device, key, value)
 
     def __init__(self):
@@ -125,7 +124,5 @@ class HandlerRegistry:
         self._handlers[name] = handler
 
     def _handle_reading(self, device, key, value):
-        logging.debug("Handling message 2")
         for handler in self._handlers.values():
-            logging.debug("Handling message 3")
             handler.handle_reading(device, key, value)

@@ -18,7 +18,7 @@ class MQTTHandler(Handler):
     def __init__(self, **kw_args):
         super(MQTTHandler, self).__init__(**kw_args)
 
-        reg = Registry.DeviceRegistry.singleton()
+        self.registry = Registry.DeviceRegistry.singleton()
 
         self.username = kw_args.get('username')
         self.password = kw_args.get('password')
@@ -34,11 +34,14 @@ class MQTTHandler(Handler):
         self.client.connect(self.host, self.port, 60)
         self.client.loop_start()
 
-        for d in reg.list():
-            device = reg.get(d)
+        for d in self.registry.list():
+            device = self.registry.get(d)
+            topic = '/'.join([self.topic_prefix, device.location if device.location else "default", device.uuid, "name"])
+            self.client.publish(topic, device.name)
+            
             features = device.features()
             for f in features.keys():
-                topic = '/'.join(['', self.topic_prefix, d, f])
+                topic = '/'.join([self.topic_prefix, device.location if device.location else "default", device.uuid, f])
 
                 if 'get' in features[f]:
                     # Create the MQTT topic and push the current value
@@ -83,7 +86,8 @@ class MQTTHandler(Handler):
 
     def handle_reading(self, device, key, value):
         # Set the MQTT Topic for this device/key = value
-        topic = '/'.join(['', self.topic_prefix, device, key])
+        device = self.registry.get(device)
+        topic = '/'.join([self.topic_prefix, device.location if device.location else "default", device.uuid, key])
         result = self.client.publish(topic, value)
 
         status = result[0]
