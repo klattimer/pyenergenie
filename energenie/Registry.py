@@ -10,7 +10,7 @@ import logging
 
 from copy import copy
 from . import Devices
-from . import Config
+from energenie.Config import Config
 from energenie.Devices.MiHomeDevice import MiHomeDevice
 from . import OpenThings
 
