@@ -27,11 +27,11 @@ class MQTTHandler(Handler):
         self.topic_prefix = kw_args.get('topic_prefix')
 
         self.client = mqtt.Client()
-        self.client.username_pw_set(self.handler.username, self.handler.password)
+        self.client.username_pw_set(self.username, self.password)
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
 
-        self.client.connect(self.handler.host, self.handler.port, 60)
+        self.client.connect(self.host, self.port, 60)
         self.client.loop_start()
 
         for d in reg.list():

@@ -231,7 +231,7 @@ def main():
     elif args.monitor:
         print("Starting PyEnergenie Monitor Mode")
         e = Energenie()
-        e.handlers.add("TerminalEchoHandler", name="ECHO")
+        e.handlers.add("ECHO", type="TerminalEchoHandler")
         e.discover("ECHO")
         e.start()
         try:
