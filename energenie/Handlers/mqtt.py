@@ -38,7 +38,7 @@ class MQTTHandler(Handler):
             device = reg.get(d)
             features = device.features()
             for f in features.keys():
-                topic = '/'.join(['', self.topic_prefix, device, key])
+                topic = '/'.join(['', self.topic_prefix, d, f])
 
                 if 'get' in features[f]:
                     # Create the MQTT topic and push the current value
