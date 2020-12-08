@@ -64,7 +64,7 @@ class MQTTHandler(Handler):
         return data
 
     def on_connect(self, client, userdata, flags, rc):
-        logging.debug("Connected to mqtt server %s with result code %s" % (self.handler.host, str(rc)))
+        logging.debug("Connected to mqtt server %s with result code %s" % (self.host, str(rc)))
         client.subscribe("$SYS/#")
 
     def on_message(self, client, userdata, msg):
