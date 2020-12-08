@@ -87,22 +87,22 @@ class MIHO013(MiHomeDevice):
         MiHomeDevice.__init__(self, **kw_args)
 
         class Readings():
-            battery_voltage      = None
-            ambient_temperature  = None
-            pipe_temperature     = None
-            setpoint_temperature = None
-            valve_position       = None
-            diagnostic_flags     = None
+            battery_voltage      = -1
+            ambient_temperature  = -1
+            pipe_temperature     = -1
+            setpoint_temperature = -1
+            valve_position       = -1
+            diagnostic_flags     = -1
         self.readings = Readings()
 
         self.radio_config.inner_times = 4
         self.radio_config.outer_times = 4
         self.send_queue = []
-        self.lastVoltageReading = None
-        self.lastDiagnosticsReading = None
+        self.lastVoltageReading = -1
+        self.lastDiagnosticsReading = -1
         self.voltageReadingPeriod = 3600
         self.diagnosticsReadingPeriod = 3600
-        self._valvePosition = None
+        self._valvePosition = -1
 
     def handle_message(self, payload):
         # send a message whilst receive window is open, this MUST be done first
@@ -163,7 +163,7 @@ class MIHO013(MiHomeDevice):
 
     def set_setpoint_temperature(self, temperature: float):
         self.readings.setpoint_temperature = temperature
-        HandlerRegistry.handle_reading(self.uuid, 'setpoint_temperature', position)
+        # HandlerRegistry.handle_reading(self.uuid, 'setpoint_temperature', position)
         payload = OpenThings.Message(MIHO013_SET_TEMPERATURE, header=self.__class__.header()).copyof()
         if temperature < 0:
             temperature = 0
@@ -183,7 +183,7 @@ class MIHO013(MiHomeDevice):
         payload = OpenThings.Message(MIHO013_SET_VALVE_POSITION, header=self.__class__.header()).copyof()
         payload.set(recs_VALVE_POSITION_value=position)
         self._valvePosition = position
-        HandlerRegistry.handle_reading(self.uuid, 'valve_position', position)
+        # HandlerRegistry.handle_reading(self.uuid, 'valve_position', position)
         self.queue_message(payload)
 
     def get_valve_position(self) -> int:
