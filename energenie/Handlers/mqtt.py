@@ -70,8 +70,10 @@ class MQTTHandler(Handler):
     def on_message(self, client, userdata, msg):
         value = msg.payload.decode()
         topic = msg.topic
-        logging.debug(topic)
-        _, topic_prefix, device, key = topic.split('/')
+        try:
+            _, topic_prefix, device, key = topic.split('/')
+        except:
+            pass
         if topic_prefix != self.topic_prefix:
             logging.error("Topic prefixes don't match")
 
