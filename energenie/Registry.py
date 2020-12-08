@@ -85,7 +85,7 @@ class DeviceRegistry():
 
     def list(self):
         """List the devices by name"""
-        return [k for k in self.device_name_uuid.keys()]
+        return [k for k in self.devices.keys()]
 
     def setup_device_routing(self, c):
         # if can transmit, we can receive from it
