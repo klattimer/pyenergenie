@@ -38,9 +38,7 @@ class Handler:
         pass
 
     def set(self, device, key, value):
-        pass
-
-    def get(self, device, key):
+        # Lookup the device, and set the key to value
         pass
 
     def handle_reading(self, device, key, value):

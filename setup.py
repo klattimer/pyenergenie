@@ -26,9 +26,10 @@ setup(
         'smarthome', 'energenie', 'trv', 'relay', 'sensor', 'remote'
     ],
     install_requires=[
+        'paho-mqtt'
+        # 'requests',
+        # 'ws4py'
         # 'wakeonlan',
-        # 'ws4py',
-        # 'requests'
     ],
     data_files=[
         ('config', ['data/config.json']),

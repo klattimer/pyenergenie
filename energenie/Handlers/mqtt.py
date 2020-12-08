@@ -1,5 +1,9 @@
 from energenie.Handlers import Handler
 from energenie import Registry
+import paho.mqtt.client as mqtt
+import Threading
+from queue import Queue
+import logging
 
 
 class MQTTHandler(Handler):
@@ -24,27 +28,31 @@ class MQTTHandler(Handler):
         self.port = kw_args.get('port')
         self.topic_prefix = kw_args.get('topic_prefix')
 
+        self.client = mqtt.Client()
+        self.client.username_pw_set(self.handler.username, self.handler.password)
+        self.client.on_connect = self.on_connect
+        self.client.on_message = self.on_message
+
+        self.client.connect(self.handler.host, self.handler.port, 60)
+        self.client.loop_start()
+
         for d in reg.list():
             device = reg[d]
-            features = device.feature()
+            features = device.features()
             for f in features.keys():
-                if 'set' in features[f]:
-                    # Subscribe to setter topic, retrieve the current value
-                    pass
+                topic = ['', self.topic_prefix, d, f]
 
                 if 'get' in features[f]:
                     # Create the MQTT topic and push the current value
-                    pass
+                    logging.debug(f"Initialising MQTT topic {topic} getter value")
+                    value = device['get_' + f]()
+                    self.client.publish(topic, value)
 
-        # Subscribe to relevant topics
-        # i.e. any device which is rx and has setters
-        # Get the current published state of the devices
-        # Set the device states according to the MQTT values, if setters exist for the values
-        # Publish information about this system
-        # - IP address
-        # - Available handlers
-        # - Supported devices
-        pass
+                if 'set' in features[f]:
+                    # Subscribe to setter topic, retrieve the current value
+
+                    logging.debug(f"Subscribing to MQTT topic {topic}")
+                    self.client.subscribe(topic)
 
     def serialise(self):
         data = super.serialise()
@@ -57,6 +65,25 @@ class MQTTHandler(Handler):
         })
         return data
 
+    def on_connect(self, client, userdata, flags, rc):
+        logging.debug("Connected to mqtt server %s with result code %s" % (self.handler.host, str(rc)))
+        client.subscribe("$SYS/#")
+
+    def on_message(self, client, userdata, msg):
+        value = msg.payload.decode()
+        topic = msg.topic
+        _, topic_prefix, device, key = topic.split('/')
+        if topic_prefix != self.topic_prefix:
+            logging.error("Topic prefixes don't match")
+
+        logging.debug("Received set on mqtt for %s, %s = %s" % (device, key, str(value)))
+        self.set(device, key, value)
+
     def handle_reading(self, device, key, value):
         # Set the MQTT Topic for this device/key = value
-        pass
+        topic = ['', self.topic_prefix, device, key]
+        result = self.client.publish(topic, value)
+
+        status = result[0]
+        if status != 0:
+            logging.error(f"Failed to send message to topic {topic}")
