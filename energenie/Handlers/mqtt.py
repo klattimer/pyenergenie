@@ -73,9 +73,10 @@ class MQTTHandler(Handler):
         try:
             _, topic_prefix, device, key = topic.split('/')
         except:
-            return 
+            return
+
         if topic_prefix != self.topic_prefix:
-            logging.error("Topic prefixes don't match")
+            return
 
         logging.debug("Received set on mqtt for %s, %s = %s" % (device, key, str(value)))
         self.set(device, key, value)
