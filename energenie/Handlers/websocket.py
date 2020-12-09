@@ -42,7 +42,7 @@ class WebSocketHandler(Handler):
         # await websocket.send(greeting)
         # print(f"> {greeting}")
 
-    def handle_reading(self, device, key, value):
+    async def handle_reading(self, device, key, value):
         device = self.registry.get(device)
         message = {
 
