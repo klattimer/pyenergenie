@@ -67,7 +67,12 @@ class HandlerFactory:
             if f.startswith("__"): continue
             if not f.endswith(".py"): continue
             m = f.replace('.py', '')
-            module = importlib.import_module('.' + m, 'energenie.Handlers')
+            try:
+                module = importlib.import_module('.' + m, 'energenie.Handlers')
+            except:
+                logging.exeption("Module import failed: " + m)
+                continue
+                
             for name, obj in inspect.getmembers(module):
                 try:
                     if not inspect.isclass(obj):
