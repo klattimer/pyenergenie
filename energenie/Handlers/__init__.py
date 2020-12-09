@@ -12,9 +12,9 @@ class Handler:
     @classmethod
     def describe(cls):
         return {
-            'protocol': cls._protocol,
-            'description': cls._description,
-            'args': cls._args
+            'protocol': cls.protocol,
+            'description': cls.description,
+            'args': cls.args
         }
 
     def __init__(self, **kw_args):
@@ -115,14 +115,29 @@ class HandlerRegistry:
         for (name, handler_args) in handlers.items():
             if handler_args.get('enabled') is not True:
                 continue
-            handler = self.__handler_factory[handler_args['type']](**handler_args)
+            try:
+                handler = self.__handler_factory[handler_args['type']](**handler_args)
+            except:
+                logging.exception("Failed to initialise handler of type %s" % handler_args['type'])
+                return
             logging.debug("Adding handler: " + name)
             self._handlers[name] = handler
+
+    def save(self):
+        """ Set config handlers to new settings """
+        pass
+
+    def list(self):
+        return list(self._handlers.keys())
 
     def add(self, name, **kw_args):
         handler = self.__handler_factory[kw_args['type']](**kw_args)
         self._handlers[name] = handler
 
+    def get(self, name):
+        return self._handlers[name]
+
     def _handle_reading(self, device, key, value):
         for handler in self._handlers.values():
+            if handler.enabled is False: continue
             handler.handle_reading(device, key, value)

@@ -5,14 +5,31 @@ import logging
 
 
 class MQTTHandler(Handler):
-    _protocol = 'mqtt'
-    _description = 'Mosquitto Handler'
-    _args = {
-        'host': 'str',
-        'port': 'int',
-        'username': 'str',
-        'password': 'str',
-        'topic_prefix': 'str'
+    protocol = 'mqtt'
+    description = 'Mosquitto Handler'
+    args = {
+        'host': {
+            'type': 'str',
+            'prompt': 'Hostname or IP Address'
+        },
+        'port': {
+            'type': 'int',
+            'prompt': 'Port number (default: 1883)',
+            'default': 1883
+        },
+        'username': {
+            'type': 'str',
+            'prompt': 'Username if required'
+        },
+        'password': {
+            'type': 'str',
+            'prompt': 'Password'
+        },
+        'topic_prefix': {
+            'type': 'str',
+            'prompt': 'Topic Prefix (default: energenie)',
+            'default': 'energenie'
+        }
     }
 
     def __init__(self, **kw_args):

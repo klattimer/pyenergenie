@@ -109,8 +109,8 @@ class MIHO013(MiHomeDevice):
         if len(self.send_queue) > 0:
             message = self.send_queue.pop(0)
             self.send_message(message)
-            logging.debug("Sent message %s" % str(message))
-            logging.debug("MIHO013 send %s (%s remaining)" % (self.device_id, len(self.send_queue)))
+            # logging.debug("Sent message %s" % str(message))
+            # logging.debug("MIHO013 send %s (%s remaining)" % (self.device_id, len(self.send_queue)))
 
         # check if it's time to refresh readings
         now = time.time()
@@ -127,7 +127,7 @@ class MIHO013(MiHomeDevice):
             paramid = rec["paramid"]
             if "value" in rec:
                 value = rec["value"]
-                logging.debug("MIHO013 new data %s %s %s" % (self.device_id, OpenThings.paramid_to_paramname(paramid), value))
+                # logging.debug("MIHO013 new data %s %s %s" % (self.device_id, OpenThings.paramid_to_paramname(paramid), value))
                 if paramid == OpenThings.PARAM_TEMPERATURE:
                     self.readings.ambient_temperature = value
                     HandlerRegistry.handle_reading(self.uuid, 'ambient_temperature', value)
@@ -146,7 +146,7 @@ class MIHO013(MiHomeDevice):
             header_sensorid=self.device_id,
             header_encryptPIP=int(random.randrange(0xFFFF))
         )
-        logging.debug("Queuing message %s " % str(message))
+        # logging.debug("Queuing message %s " % str(message))
         self.send_queue.append(copy.copy(message))
 
     def get_battery_voltage(self) -> float:  # ->voltage:float

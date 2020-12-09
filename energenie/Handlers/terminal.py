@@ -3,7 +3,7 @@ from energenie.Handlers import Handler
 
 
 class TerminalEchoHandler(Handler):
-    _description = "Simple terminal output handler"
+    description = "Simple terminal output handler"
 
     def __init__(self, **kw_args):
         super(TerminalEchoHandler, self).__init__(**kw_args)

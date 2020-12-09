@@ -1,7 +1,10 @@
 from cmd import Cmd
 from energenie.Devices import DeviceFactory
+from energenie.Handlers import HandlerFactory
+from energenie.Config import Config
 import time, math
 import sys, select
+import logging
 
 
 #
@@ -36,6 +39,7 @@ class EnergenieShell(Cmd):
     def __init__(self, energenie):
         super(EnergenieShell, self).__init__()
         self.energenie = energenie
+        self.config = Config.singleton()
 
     def do_add(self, name, device_type, device_id, location=None):
         """
@@ -73,14 +77,24 @@ class EnergenieShell(Cmd):
         """
         Discover and register new devices
         """
-        self.energenie.discover(mode)
+        try:
+            self.energenie.discover(mode)
+        except:
+            logging.exception("Mode does not exist")
+            print ("Mode %s does not exist" % mode)
+            return
+
         self.energenie.start()
 
     def do_describe(self, device):
         """
         Describe a device's capabilities
         """
-        device_description = DeviceFactory[device].describe()
+        try:
+            device_description = DeviceFactory[device].describe()
+        except:
+            logging.exception("Device does not exist")
+            print ("Device %s does not exist" % device)
         describe_device(device_description)
 
     def do_learn(self):
@@ -133,11 +147,13 @@ class EnergenieShell(Cmd):
         """
         Monitor incoming sensor readings
         """
+        print("Starting PyEnergenie Monitor Mode")
+        for handler in self.energenie.handlers.list():
+            self.energenie.handlers.get(handler).enabled = False
+        self.energenie.handlers.add("ECHO", type="TerminalEchoHandler")
         self.energenie.discover("ECHO")
         self.energenie.start()
 
-        # TODO: Configure a handler to output received events
-        # to the terminal, and disable other handlers
         try:
             while True:
                 time.sleep(10)
@@ -150,6 +166,28 @@ class EnergenieShell(Cmd):
         Add a handler
         """
         # Enters into a sub-command loop for setting handler properties
+        print ("Creating new handler of type " + type)
+        handler_factory = HandlerFactory.singleton()
+        try:
+            cls = handler_factory[type]
+        except:
+            logging.exception("Type does not exist")
+            print ("Handler type does not exist")
+            return
+
+        name = input("Name of the new handler: ")
+        kw_args = {
+            'type': type
+        }
+        for (key, value) in cls.args:
+            kw_args[key] = input(value['prompt'] + ': ')
+
+        self.energenie.handlers.add(name, **kw_args)
+
+    def do_save(self):
+        self.energenie.handlers.save()
+        self.energenie.registry.save()
+        self.config.save()
 
     def do_exit(self):
         """

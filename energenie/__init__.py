@@ -110,7 +110,11 @@ class Energenie(threading.Thread):
 
     def discover(self, mode):
         if type(mode) == str:
-            mode = DiscoveryMode.get(mode)
+            try:
+                mode = DiscoveryMode.get(mode)
+            except:
+                logging.exception("Mode does not exist")
+                raise Exception("Mode %s does not exist" % mode)
 
         if mode == DiscoveryMode.ECHO:
             self.registry.fsk_router.when_unknown(None)
@@ -192,7 +196,7 @@ def format_report(report_data):
 
 
 def main():
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.DEBUG, filename="~/.pyenergenie/log")
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--interactive", action="store_true", help="Start interactive mode")
     parser.add_argument("-d", "--discover", action="store_true", help="Start discovery mode")
@@ -231,6 +235,8 @@ def main():
     elif args.monitor:
         print("Starting PyEnergenie Monitor Mode")
         e = Energenie()
+        for handler in e.handlers.list():
+            e.handlers.get(handler).enabled = False
         e.handlers.add("ECHO", type="TerminalEchoHandler")
         e.discover("ECHO")
         e.start()

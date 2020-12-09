@@ -26,7 +26,8 @@ setup(
         'smarthome', 'energenie', 'trv', 'relay', 'sensor', 'remote'
     ],
     install_requires=[
-        'paho-mqtt'
+        'paho-mqtt',
+        'websockets'
         # 'requests',
         # 'ws4py'
         # 'wakeonlan',
