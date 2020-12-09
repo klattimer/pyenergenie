@@ -197,7 +197,7 @@ def format_report(report_data):
 
 
 def main():
-    logging.basicConfig(level=logging.DEBUG, filename=os.expanduser("~/.pyenergenie/log"))
+    logging.basicConfig(level=logging.DEBUG, filename=os.path.expanduser("~/.pyenergenie/log"))
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--interactive", action="store_true", help="Start interactive mode")
     parser.add_argument("-d", "--discover", action="store_true", help="Start discovery mode")
