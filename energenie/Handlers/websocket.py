@@ -1,5 +1,8 @@
+from energenie.Handlers import Handler
+from energenie import Registry
 import asyncio
 import websockets
+import logging
 
 
 class WebSocketHandler(Handler):
@@ -33,6 +36,21 @@ class WebSocketHandler(Handler):
 
     async def server(self, websocket, path):
         await self.register(websocket)
+        try:
+            # await websocket.send(state_event())
+            async for message in websocket:
+                self.handle_message(message)
+                # data = json.loads(message)
+                # if data["action"] == "minus":
+                #     STATE["value"] -= 1
+                #     await notify_state()
+                # elif data["action"] == "plus":
+                #     STATE["value"] += 1
+                #     await notify_state()
+                # else:
+                #     logging.error("unsupported event: {}", data)
+        finally:
+            await unregister(websocket)
         #
         # name = await websocket.recv()
         # print(f"< {name}")
@@ -41,6 +59,9 @@ class WebSocketHandler(Handler):
         #
         # await websocket.send(greeting)
         # print(f"> {greeting}")
+
+    async def handle_message(self, message):
+        pass
 
     async def handle_reading(self, device, key, value):
         device = self.registry.get(device)
