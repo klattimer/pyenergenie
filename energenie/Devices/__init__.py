@@ -6,6 +6,7 @@ import importlib
 import inspect
 import time
 from collections import defaultdict, Counter
+from energenie.Handlers import HandlerRegistry
 from uuid import uuid4
 import logging
 

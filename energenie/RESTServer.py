@@ -1,4 +1,6 @@
 from flask import Flask, request, redirect
+from energenie.Registry import DeviceRegistry
+from energenie.Devices import DeviceFactory
 import threading
 import json
 app = Flask(__name__)
@@ -24,13 +26,15 @@ def apiroot():
 # - Supported devices (get)
 @app.route('/api/v1/hardware')
 def hardware():
-    pass
+    devicefactory = DeviceFactory.singleton()
+    return json.dumps({k: devicefactory[k].describe() for k in devicefactory.keys()})
 
 
 # - Registered devices (get, post, delete)
 @app.route('/api/v1/devices')
 def devices():
-    pass
+    registry = DeviceRegistry.singleton()
+    return json.dumps({k: registry.get(k).serialise() for k in registry.list()})
 
 
 # - Get device state

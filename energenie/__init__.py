@@ -23,7 +23,7 @@ from . import Shell
 from . import Handlers
 from .Config import Config
 from enum import Enum
-import RESTServer
+from . import RESTServer
 
 
 def test_dummy():
@@ -225,7 +225,7 @@ def main():
 
     elif args.list:
         registry = Registry.DeviceRegistry.singleton()
-        devicefactory = Devices.DeviceFactory.singleton()
+
         report_data = {}
         report_data['supported_devices'] = {k: devicefactory[k].describe() for k in devicefactory.keys()}
         report_data['registered_devices'] = {k: registry.get(k).serialise() for k in registry.list()}
