@@ -12,6 +12,7 @@ from copy import copy
 from . import Devices
 from energenie.Config import Config
 from energenie.Devices.MiHomeDevice import MiHomeDevice
+from energenie.Handlers import HandlerRegistry
 from . import OpenThings
 
 
@@ -58,6 +59,7 @@ class DeviceRegistry():
 
         if device.enabled is True:
             self.setup_device_routing(device)
+        HandlerRegistry.singleton().device_added(device.uuid)
 
     def get(self, name) -> Devices.Device:  # -> Device
         """Get the device instance from the registry"""
@@ -70,11 +72,14 @@ class DeviceRegistry():
         if name in self.device_ids.keys():
             return self.devices[self.device_ids[name]]
 
+        return None
+
     def delete(self, name):
         """Delete the named class instance"""
         device = self.get(name)
         if device.enabled is True:
             self.remove_device_routing(device)
+        HandlerRegistry.singleton().device_removed(device.uuid)
         del(self.devices[device.uuid])
 
     def list(self):

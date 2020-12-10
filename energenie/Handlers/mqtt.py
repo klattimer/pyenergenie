@@ -2,6 +2,7 @@ from energenie.Handlers import Handler
 from energenie import Registry
 import paho.mqtt.client as mqtt
 import logging
+import time
 
 
 class MQTTHandler(Handler):
@@ -114,3 +115,18 @@ class MQTTHandler(Handler):
         status = result[0]
         if status != 0:
             logging.error(f"Failed to send message to topic {topic}")
+
+    def device_detected(self, device):
+        pass
+
+    def device_added(self, device):
+        topic = '/'.join([self.topic_prefix, device.location if device.location else "default", device.uuid, "name"])
+        self.client.publish(topic, device.name)
+        topic = '/'.join([self.topic_prefix, device.location if device.location else "default", device.uuid, "type"])
+        self.client.publish(topic, device.__class__.__name__)
+        topic = '/'.join([self.topic_prefix, device.location if device.location else "default", device.uuid, "id"])
+        self.client.publish(topic, device.device_id)
+
+    def device_removed(self, device):
+        topic = '/'.join([self.topic_prefix, device.location if device.location else "default", device.uuid, "removed_on"])
+        self.client.publish(topic, time.time())

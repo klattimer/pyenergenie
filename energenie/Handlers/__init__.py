@@ -72,7 +72,7 @@ class HandlerFactory:
             except:
                 logging.exeption("Module import failed: " + m)
                 continue
-                
+
             for name, obj in inspect.getmembers(module):
                 try:
                     if not inspect.isclass(obj):
@@ -112,6 +112,18 @@ class HandlerRegistry:
     def handle_reading(cls, device, key, value):
         cls.singleton()._handle_reading(device, key, value)
 
+    @classmethod
+    def device_detected(cls, device):
+        cls.singleton()._device_detected(device)
+
+    @classmethod
+    def device_removed(cls, device):
+        cls.singleton()._device_removed(device)
+
+    @classmethod
+    def device_added(cls, device):
+        cls.singleton()._device_added(device)
+
     def __init__(self):
         # Load settings from config
         self.__handler_factory = HandlerFactory.singleton()
@@ -141,6 +153,19 @@ class HandlerRegistry:
 
     def get(self, name):
         return self._handlers[name]
+
+    def _device_detected(self, device):
+        pass
+
+    def _device_removed(self, device):
+        for handler in self._handlers.values():
+            if handler.enabled is False: continue
+            handler.device_removed(device)
+
+    def _device_added(self, device):
+        for handler in self._handlers.values():
+            if handler.enabled is False: continue
+            handler.device_added(device)
 
     def _handle_reading(self, device, key, value):
         for handler in self._handlers.values():
