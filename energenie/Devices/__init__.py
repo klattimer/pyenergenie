@@ -196,7 +196,7 @@ class Device():
         min_interval = 30  # 30 seconds
         intervals = [min_interval * round(x / min_interval) for x in self.__last_receive_intervals]
         counted = Counter(intervals)
-        most_common = counted.most_common(1)[0]
+        most_common = counted.most_common(1)[0][0]
         segment = [x for x in self.__last_receive_intervals
                    if x > most_common - (min_interval / 2.) and
                    x < most_common + (min_interval / 2.)]
