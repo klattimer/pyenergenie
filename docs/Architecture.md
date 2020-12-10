@@ -2,7 +2,9 @@
 
 ## Overview
 
-The basic architecture follows a plugin type system where the files in the folder
+## Devices
+
+The basic device driver architecture follows a plugin type system where the files in the folder
 "Devices" are registered for use, devices describe themselves in such a way as they
 are usable within the system without other external configuration. That is to say that
 each plugin is self-contained.
@@ -12,26 +14,47 @@ usable in the DeviceRegistry Devices which exist in the registry are configured 
 incoming messages on initialisation, devices which are routed must have classes in the
 DeviceFactory's available classes.
 
-Basic operation of PyEnergenie as a library requires first configuring how you wish to deal
-with new incoming messages by defining a discovery mode, and then secondly starting the
-radio receiver loop which will listen for and route incoming messages.
+### Development guidelines
 
-Interactively you can use the shell to add or remove devices from the registry. Once
-configured incoming messages for registered devices are routed via the Router class
-this class reads incoming messages and tries to identify where they are supposed to go
-at the moment the Router only supports FSK routing of incoming messages. This is largely
-due to the hardware limitations preventing both FSK and OOK listening simultaneously.
-This may be avoidable by modifying radio.c to utilise the hardware functions better,
-but this would require more research.
+A plugin must inherit from either ```Device``` or a subclass, and can provide the following information
+used to classify it:
 
-```Python
-from Energenie import Energenie
-...
+```
+_product_id = None
+_product_name = None
+_product_description = None
+_product_rf = None
+_product_url = None
+_product_user_guide = None
+```
+
+_product_id relates to the OpenThings product ID.
+
+_product_rf must be in the format of ```<AIR_INTERFACE_TYPE>(tx, rx)``` for instance:
+
+```FSK(tx)```
+```FSK(tx, rx)```
+```OOK(rx)```
+
+A minimal implementation would only need to specify some of the information above in order
+to be operable. For instance an OOK switch is provided with the address information during
+configuration, and therefore only requires a template describing the device in physical terms.
+
+More complex devices will require implementation of getter and setter functions in order to
+expose these values to the available interfaces. An example of a deeper implementation of a
+device can be fount in Devices/MIHO013.py which operates eTRV radiator valves.
+
+Essentially subclasses should look to implement the following methods:
+```
+def handle_message(self, payload):
+def get_*(self):
+def set_*(self, value):
 ```
 
 
-## Writing plugins
+## Handlers
 
-Plugins expose features of a device with a get/set prefix on functions, these functions
-essentially issue commands to the radio, or return results collected by the handler
-upon routing incoming signals.
+Handlers are based on a plugin system much like Devices and can be designed to use a minimal
+set of the Handler base class features.
+
+### Development guidelines
