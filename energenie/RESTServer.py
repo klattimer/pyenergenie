@@ -62,12 +62,5 @@ def handlers():
 def start():
     def run():
         app.run(host='0.0.0.0', port=8080, debug=True, use_reloader=False)
-    threading.Thread(target=run).start()
-    return app
-
-
-def shutdown():
-    func = request.environ.get('werkzeug.server.shutdown')
-    if func is None:
-        raise RuntimeError('Not running with the Werkzeug Server')
-    func()
+    thread = threading.Thread(target=run).start()
+    return thread
