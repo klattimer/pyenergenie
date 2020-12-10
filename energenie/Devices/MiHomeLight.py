@@ -6,7 +6,8 @@ class MiHomeLight(LegacyDevice):
     _product_description = "Receive-only light switch"
     _product_rf = "OOK(rx)"
     _product_url = "https://energenie4u.co.uk/"
-    
+    _product_user_guide = "https://energenie4u.co.uk/res/pdfs/MIHome-Light-User-Guide-v1.4.pdf"
+
     """Base for all MiHomeLight variants. Receive only OOK device"""
     def __init__(self, **kw_args):
         LegacyDevice.__init__(self, **kw_args)

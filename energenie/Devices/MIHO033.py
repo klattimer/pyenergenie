@@ -9,6 +9,7 @@ class MIHO033(MiHomeDevice):
     _product_description = "This allows you to monitor opening of windows and doors in your home."
     _product_rf = "FSK(tx)"
     _product_url = "https://energenie4u.co.uk/catalogue/product/MIHO033"
+    _product_user_guide = "https://energenie4u.co.uk/res/pdfs/MIHO033-Open-Sensor-User-Guide-v1.1.pdf"
 
     """An Energenie Open Sensor"""
     def __init__(self, **kw_args):

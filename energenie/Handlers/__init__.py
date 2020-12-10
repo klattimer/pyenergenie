@@ -171,3 +171,6 @@ class HandlerRegistry:
         for handler in self._handlers.values():
             if handler.enabled is False: continue
             handler.handle_reading(device, key, value)
+
+    def ask(self):
+        pass

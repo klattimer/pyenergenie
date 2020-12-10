@@ -22,6 +22,7 @@ class Device():
     _product_description = None
     _product_rf = None
     _product_url = None
+    _product_user_guide = None
 
     @property
     def address(self):
@@ -100,6 +101,7 @@ class Device():
             'description': cls._product_description,
             'rf': cls._product_rf,
             'url': cls._product_url,
+            'user_guide': cls._product_user_guide,
             'features': cls.features()
         }
 

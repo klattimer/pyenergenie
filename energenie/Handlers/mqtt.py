@@ -130,3 +130,6 @@ class MQTTHandler(Handler):
     def device_removed(self, device):
         topic = '/'.join([self.topic_prefix, device.location if device.location else "default", device.uuid, "removed_on"])
         self.client.publish(topic, time.time())
+
+    def ask(self):
+        pass
