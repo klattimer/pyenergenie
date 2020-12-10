@@ -109,7 +109,7 @@ class Energenie(threading.Thread):
     def stop(self):
         """Cleanly close the Energenie system when finished"""
         self.running = False
-        self.restserver.stop()
+        RESTServer.shutdown()
         radio.finished()
 
     def discover(self, mode):
