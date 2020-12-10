@@ -218,6 +218,9 @@ class Device():
         if len(self.__last_receive_intervals) > 60:
             self.__last_receive_intervals = self.__last_receive_intervals[-60:]
         self.last_receive_time = l
+        HandlerRegistry.handle_reading(self.uuid, 'last_receive_time', self.last_receive_time)
+        HandlerRegistry.handle_reading(self.uuid, 'next_receive_time', self.get_next_receive_time())
+        HandlerRegistry.handle_reading(self.uuid, 'receive_count', self.get_receive_count())
 
     def handle_message(self, payload):
         """Default handling for a new message"""
