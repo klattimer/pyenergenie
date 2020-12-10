@@ -38,10 +38,10 @@ def devices():
 
 
 # - Get device state
-@app.route('/api/v1/device')
-def device(device_id):
+@app.route('/api/v1/device/<device_uuid>')
+def device(device_uuid):
     registry = DeviceRegistry.singleton()
-    device = registry.get(device_id)
+    device = registry.get(device_uuid)
     data = device.serialise()
     data['readings'] = device.state()
     return json.dumps(data)
