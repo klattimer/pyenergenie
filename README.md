@@ -1,195 +1,77 @@
-> **Why **THIS** fork?** - The code that was provided originally was messy
-difficult to maintain, full of lint errors and implemented things that you
-shouldn't generally go about implementing from scratch yourself... [klattimer]
-
-> **Why this fork?** - Support for energenie eTVRs (MIHO0013) wasn't there in original repo. I managed to get them working in this code base and all major functionality is supported including getting battery levels and diagnostic codes. I have asked whaleygeek if the changes could be merged but received no response.
-
 # pyenergenie
-A python interface to the Energenie line of products
 
-https://energenie4u.co.uk/
+A python interface to energenie and OpenThings products designed for RaspberryPi.
+Using either the ENER314-RT or homebrew hardware with the RFM69HCW.
 
+This project is a fork - refactor and redesign of the software originally provided by
+energenie. [https://github.com/Energenie/pyenergenie] I've pulled additional features
+from a variety of other forks and am willing to accept patches and pull requests.
 
-WHERE IS THE BEST PLACE TO GET THE CODE?
-----
+## Features
 
-The most tested code is in the Energenie repo here:
+ - Completely rewritten device registry
+ - Completely rewritten device factory & plugin system
+ - Introduced new "Handlers" factory and registry for handling events/changes
+     - MQTT integration
+     - Websocket service
+ - Flask webserver for polling status and device metadata
+ - Supports almost every energenie branded device.
+    - MiHome range of lights and sockets
+    - Energy monitors
+    - eTRV valves
 
-https://github.com/Energenie/pyenergenie
+## Get involved
 
-i.e. Energenie test on devices before updating the public repo
-and linking external product pages to the code download. But, this might
-be quite a bit older than the current ongoing development work.
+We need help testing devices and adding support for devices such as double sockets
+and other devices we don't own.
 
-
-
-The most leading-edge code is in whaleygeek's repo here:
-
-https://github.com/whaleygeek/pyenergenie
-
-i.e. This is whaleygeek's development area, master is reasonably
-well tested, and there may be multiple feature branches with ongoing
-development work that is still in progress. But, this might be
-the most up to date code with support for newer devices, and there
-may be experimental items in here that you would like to get early
-access to.
-
-
-
-WHAT IS THIS ALL ABOUT?
-----
-
-Energenie devices (both the green button devices, and the newer MiHome range)
-can be controlled and monitored by this Python library on a Raspberry Pi.
-With it you can turn sockets on and off, and monitor energy usage.
-
-There are two ways to control Energenie devices from a Raspberry Pi.
-One of their boards maps 4 GPIO's to transmit 4 standard messages.
-For that board, use this code from Ben Nuttall and Amy Mather:
-https://pypi.python.org/pypi/energenie
-
-The second board, the ENER314-RT board, is a full radio that is programmable
-from the SPI interface of the Raspberry Pi. For that board, please use
-this code, which now supports all models of Raspberry Pi, and all devices
-from Energenie (including the old green button devices and the new
-MiHome monitor devices).
-
-The Energenie product line uses the HopeRF radio transciever, and the OpenThings
-protocol from Sentec. Energenie have built a RaspberryPi add-on board that
-interfaces to the HopeRF RFM69, and allows both control and monitoring of their
-products from a Raspberry Pi.
-
-Energenie have some (old) sample code written in C to control and monitor
-their devices, but this package is now considered to be far superior. Energenie
-have been very kind in supporting this work by loaning devices to help with the
-testing of this code.
-
-This python library uses a 'zero install' strategy, by embedding everything
-that is needed in once place. In theory, you can just press the DownloadZip
-button, unzip the code, and run it, and it will work. (None of that
-sudo apt-get install nonsense!)
-
-This code *should* work with both Python 2 and Python 3. It has been tested
-with both, but note that ongoing development occurs in Python 2, and the
-Python 3 compatibility is only re-tested at each major release.
-
-
-Purpose
-====
-
-This library of code is designed to be everything you need to get going with
-writing a fully functional application for the Energenie devices (both monitoring
-and control).
-
-
-Getting Going
-====
-
-1) Plug in your ENER314-RT-VER01 board from Energenie onto the 26 pin or 40 pin connector of
-your Raspberry Pi. This is tested on Raspberry Pi B, B+ B2 and 2B, 3 and PiZero. There is
-no reason why it should not work on the A and A+ but it hasn't been specially tested on
-those combinations yet.
-
-2) Press the CLONE OR DOWNLOAD button to the right of this page, and choose the
-DOWNLOAD ZIP option.
-
-3) unzip the software (from a terminal prompt, e.g. LXTerminal)
+## Usage
 
 ```
-unzip pyenergenie-master.zip
-cd pyenergenie-master
-cd src
+python3 setup.py install
+pyenergenie
 ```
 
-4) If you have legacy green button devices, run the setup_tool to learn those devices
-to your code
+The default command will provide help, from there you can choose interactive mode
+or just issue commands via the command line to get started.
+
+pyenergenie is best run in daemon mode with an MQTT handler configured, this
+allows for the lowest latency of interaction.
+
+Configuration can be performed interactively, via the command line, or editing the
+json file directly. Examples are included in the docs folder.
+
+## Limitations
+
+It's currently impossible to listen in OOK and FSK mode simultaneously, the solution to
+this is to add an RTL SDR device to the system via an available USB port, which is planned
+in some way along the line.
+
+## Future support
 
 
-```
-sudo python setup_tool.py
-option 1. legacy learn mode
-ENTER for default house code (or type in a hex number with 5 digits like 12345 or CAB12)
-ENTER for switch 1 (or choose 1,2,3,4)
-```
+### Full transmit/receive support OOK/FSK
 
-Hold the green button on your legacy device until it starts to flash. It should then
-learn the house code being broadcast by the setup tool, and then start switching on and
-off.
+Transmitting OOK messages shouldn't be limited to the Energenie product range. The project
+pilight which seems almost abandoned provides support for many more types of remote control.
 
-You can edit the registry.kvs to ADD a record for an ENER002 to give this device a
-friendly name - look at the examples already in the file.
+In some way providing the raw transmit/receive functionality of the pilight via drv/radio.c
+seems to be a great option for expanding the capabilities. Along with using rtl 433 for the listen
+mode it would make PyEnergenie a pretty decent way to bridge the 433/IoT gap.
 
-If you know the house code assigned to an RF hand controller, you can program that into
-your code (and your registry.kvs) to make the socket work with both. (Note: I will be adding
-a learn mode for RF hand remotes in a later release, you can't learn their codes yet without
-having special diagnostics equipment to hand).
+### Training and learning
 
+The user experience for the interaction with devices is clunky, in order to bridge this the missing
+feature is being able to learn codes from installed transmitters. Then to use these codes, applying them
+to the receivers would be ideal.
 
-5) If you have a MiHome device, run the setup_tool to learn those devices
+## Contributions
 
+We welcome any contributions, currently the following areas need some work.
 
-```
-sudo python setup_tool.py
-option 2. mihome discovery mode
-```
-
-Wait for data to arrive from your mihome device (every 10 seconds) and accept it
-when it says 'remember device' - the device is now in the registry.kvs file
-and can be used in all other demo programs easily.
-
-
-6) Try the other demo programs, the simplest one to start using and modifying
-is control_any_auto.py as it shows how to refer to devices in your registry
-by a simple variable name, and you can switch them on and off in a device
-agnostic way (all switchable devices have a turn_on and turn_off function).
-This is probably the best way to write your app, by learning your devices
-into the registry (or hand coding them in there) and then just referring to them
-by name in your python program.
-
-
-7) Try the other demo programs
-
-These other python programs show off some other features of the Energenie Python
-library:
-
-```
-control_any_auto.py       auto variable creation from your registry.kvs
-control_any_noreg.py      creating your variables manually without a registry
-control_any_reg.py        control all switchable devices regardless of name, from registry
-discover_mihome.py        a discovery example, there are 4 standard discovery behaviours
-mihome_energy_monitor.py  a simple logger that logs all energy messages to energenie.csv
-```
-
-Gotcha's
-====
-
-Please note that there are two different radio standards in use in this library.
-There is an OOK (On Off Keying) based system that is used by the original legacy green-button sockets.
-There is also an FSK (Frequency Shift Keying) based system used by the MiHome range.
-
-This library supports both. However, please note that some Energenie products are
-branded as the MiHome range, but are internally a legacy device. This means that you will
-need to use the Legacy Learn feature with those, instead of the MiHome discovery.
-
-The MIHO002 for example is an OOK device, so you need to use the legacy learn mode
-with that.
-
-As a general rule, if a device is receive-only, it uses the OOK legacy protocol.
-If a device has any transmit features, it uses the MiHome FSK protocol.
-
-There is a full list of devices in the energenie/devices.py file along with their
-OOK or FSK mode. OOK means Legacy Learn, FSK means MiHome Discovery.
-
-Future work
-====
-
-For details about future plans and work, please see the github issues log here:
-
-https://github.com/whaleygeek/pyenergenie/issues
-
-
-David Whale
-
-@whaleygeek
-
-January 2017
+ - support for dimmable switches
+ - support for double light switches and sockets
+ - Populating the device templates which are currently missing (check the Devices/*.py files)
+ - Testing devices which haven't been fully tested
+ - Testing anything and everything
+ - Porting the pilight transmit/rececive for raw codes so we can add learning capabilities

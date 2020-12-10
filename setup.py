@@ -27,7 +27,8 @@ setup(
     ],
     install_requires=[
         'paho-mqtt',
-        'websockets'
+        'websockets',
+        'flask'
         # 'requests',
         # 'ws4py'
         # 'wakeonlan',

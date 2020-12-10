@@ -23,6 +23,7 @@ from . import Shell
 from . import Handlers
 from .Config import Config
 from enum import Enum
+import RESTServer
 
 
 def test_dummy():
@@ -57,6 +58,7 @@ class Energenie(threading.Thread):
 
         self.registry = Registry.DeviceRegistry.singleton()
         self.handlers = Handlers.HandlerRegistry.singleton()
+        self.restserver = RESTServer.start()
         self.ask_fn = self.ask
 
     def __del__(self):
