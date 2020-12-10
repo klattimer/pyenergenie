@@ -1,8 +1,7 @@
-from flask import Flask, request, redirect
+from flask import Flask, request, redirect, jsonify
 from energenie.Registry import DeviceRegistry
 from energenie.Devices import DeviceFactory
 import threading
-import json
 app = Flask(__name__)
 
 __version__ = "v1"
@@ -16,7 +15,7 @@ def root():
 # redirect / -> /api/v1
 @app.route('/api/v1/')
 def apiroot():
-    return json.dumps({
+    return jsonify({
         'application': 'pyenergenie',
         'author': 'Karl Lattimer <karl@qdh.org.uk>',
         'url': 'github.com/klattimer/pyenergenie'
@@ -27,14 +26,14 @@ def apiroot():
 @app.route('/api/v1/hardware')
 def hardware():
     devicefactory = DeviceFactory.singleton()
-    return json.dumps({k: devicefactory[k].describe() for k in devicefactory.keys()})
+    return jsonify({k: devicefactory[k].describe() for k in devicefactory.keys()})
 
 
 # - Registered devices (get, post, delete)
 @app.route('/api/v1/devices')
 def devices():
     registry = DeviceRegistry.singleton()
-    return json.dumps({k: registry.get(k).serialise() for k in registry.list()})
+    return jsonify({k: registry.get(k).serialise() for k in registry.list()})
 
 
 # - Get device state
@@ -44,7 +43,7 @@ def device(device_uuid):
     device = registry.get(device_uuid)
     data = device.serialise()
     data['readings'] = device.state()
-    return json.dumps(data)
+    return jsonify(data)
 
 
 # - Get/Set value on device
