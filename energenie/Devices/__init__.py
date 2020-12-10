@@ -200,7 +200,7 @@ class Device():
         segment = [x for x in self.__last_receive_intervals
                    if x > most_common - (min_interval / 2.) and
                    x < most_common + (min_interval / 2.)]
-        return self.__last_receive_time + (sum(segment) / len(segment))
+        return self.last_receive_time + (sum(segment) / len(segment))
 
     def get_receive_count(self) -> int:
         return self.rxseq
