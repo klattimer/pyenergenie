@@ -132,7 +132,7 @@ class Device():
         for f in features.keys():
             if 'get' in features[f]:
                 func = getattr(self, 'get_' + f)
-                states[f] = func(self)
+                states[f] = func()
         return states
 
     """A generic connected device abstraction"""
