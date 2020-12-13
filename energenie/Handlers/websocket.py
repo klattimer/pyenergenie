@@ -3,6 +3,7 @@ from energenie import Registry
 import asyncio
 import websockets
 import logging
+import json
 
 
 class WebSocketHandler(Handler):

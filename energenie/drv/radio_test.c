@@ -78,8 +78,10 @@ void radio_test_ook(void)
 {
     //gpio_init();
     //spi_init(&spi_config);
+    TRACE_OUTS("Before radio init\n");
 
     radio_init();
+    TRACE_OUTS("After radio init\n");
     radio_modulation(RADIO_MODULATION_OOK);
 
     while (1)

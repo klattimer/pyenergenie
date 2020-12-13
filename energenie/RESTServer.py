@@ -1,18 +1,27 @@
-from flask import Flask, request, redirect, jsonify
+from flask import Flask, request, redirect, jsonify, render_template
+from werkzeug.exceptions import HTTPException, NotFound, BadRequest
 from energenie.Registry import DeviceRegistry
 from energenie.Devices import DeviceFactory
+from energenie.Handlers import HandlerRegistry
 import threading
 app = Flask(__name__)
 
 __version__ = "v1"
+#
+# class InvalidData(werkzeug.exceptions.HTTPException):
+#     code = 507
+#     description = 'Not enough storage space.'
+#
+# app.register_error_handler(InsufficientStorage, handle_507)
 
 
 @app.route('/')
 def root():
-    return redirect("/api/" + __version__ + "/", code=302)
+    if request.content_type == 'application/json':
+        return redirect("/api/" + __version__ + "/", code=302)
+    return render_template('Templates/index.html')
 
 
-# redirect / -> /api/v1
 @app.route('/api/v1/')
 def apiroot():
     return jsonify({
@@ -30,32 +39,77 @@ def hardware():
 
 
 # - Registered devices (get, post, delete)
-@app.route('/api/v1/devices')
+@app.route('/api/v1/devices', methods=['GET', 'POST'])
 def devices():
     registry = DeviceRegistry.singleton()
-    return jsonify({k: registry.get(k).serialise() for k in registry.list()})
+    if request.method == 'POST':
+        data = request.get_json()
+        model = data['type']
+        del(data['type'])
+        d = DeviceFactory.get_device_from_model(model, **data)
+        registry.add(d)
+    elif request.method == 'GET':
+        return jsonify({k: registry.get(k).serialise() for k in registry.list()})
+    raise BadRequest("Bad Request")
 
 
 # - Get device state
-@app.route('/api/v1/device/<device_uuid>')
+@app.route('/api/v1/devices/<device_uuid>', methods=['GET', 'DELETE'])
 def device(device_uuid):
     registry = DeviceRegistry.singleton()
-    device = registry.get(device_uuid)
-    data = device.serialise()
-    data['readings'] = device.state()
-    return jsonify(data)
+    if request.method == 'DELETE':
+        if device_uuid is None:
+            raise BadRequest("Bad Request")
+        try:
+            registry.remove(device_uuid)
+        except KeyError as e:
+            raise NotFound(device_uuid + " Not found")
+    elif request.method == 'GET':
+        device = registry.get(device_uuid)
+        data = device.serialise()
+        data['states'] = device.state()
+        return jsonify(data)
+    raise BadRequest("Bad Request")
 
 
 # - Get/Set value on device
-@app.route('/api/v1/device/<uuid>/feature')
-def feature():
-    pass
+@app.route('/api/v1/device/<uuid>/states/<state>', methods=['GET', 'POST'])
+def states(device_uuid, state):
+    registry = DeviceRegistry.singleton()
+    if request.method == 'POST':
+        device = registry.get(device_uuid)
+        device.do_set_state(request.get_json()['value'])
+    elif request.method == 'GET':
+        device = registry.get(device_uuid)
+        return jsonify({
+            'value': device.state()[state]
+        })
+    raise BadRequest("Bad Request")
 
 
 # - Registered handlers (get, post, delete)
-@app.route('/api/v1/handlers')
-def handlers():
-    pass
+@app.route('/api/v1/handlers/<name>', methods=['GET', 'POST', 'DELETE'])
+def handlers(name=None):
+    hr = HandlerRegistry.singleton()
+    if request.method == 'POST':
+        try:
+            hr.add(request.get_json())
+        except KeyError as e:
+            raise BadRequest("Invalid POST data")
+    elif request.method == 'DELETE':
+        if name is None:
+            raise BadRequest("Bad Request")
+        try:
+            hr.remove(name)
+        except KeyError as e:
+            raise NotFound(name + " Not found")
+    elif request.method == 'GET':
+        if name is None:
+            return {k: hr.get(k).serialise() for k in hr.list()}
+        return hr.get(name).serialise()
+    return jsonify({
+        'status': 'ok'
+    })
 
 
 def start():

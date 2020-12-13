@@ -28,6 +28,9 @@ class Handler:
             'enabled': self.enabled
         }
 
+    def destroy(self):
+        pass
+
     def device_detected(self, device):
         pass
 
@@ -147,9 +150,14 @@ class HandlerRegistry:
     def list(self):
         return list(self._handlers.keys())
 
-    def add(self, name, **kw_args):
+    def add(self, **kw_args):
         handler = self.__handler_factory[kw_args['type']](**kw_args)
-        self._handlers[name] = handler
+        self._handlers[kw_args['name']] = handler
+
+    def remove(self, name):
+        handler = self._handlers[name]
+        del self._handlers[name]
+        handler.destroy()
 
     def get(self, name):
         return self._handlers[name]

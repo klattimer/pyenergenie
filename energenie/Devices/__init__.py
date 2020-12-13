@@ -137,6 +137,13 @@ class Device():
                 states[f] = func()
         return states
 
+    def do_set_state(self, key, value):
+        features = self.features()
+        if key in features.keys() and 'set' in features[key]:
+            func = getattr(self, 'set_' + key)
+            return func(value)
+        raise KeyError("state with key %s not found" % key)
+
     """A generic connected device abstraction"""
     def __init__(self, name, device_id, enabled=True, uuid=None, location=None):
         if type(self.__class__._product_rf) == str:
