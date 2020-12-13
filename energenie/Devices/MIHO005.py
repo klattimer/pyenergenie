@@ -22,6 +22,8 @@ class MIHO005(MiHomeDevice):
     _product_description = "The Adapter Plus allows you to monitor the power being used and control of the attached device."
     _product_rf = "FSK(tx,rx)"
     _product_url = "https://energenie4u.co.uk/catalogue/product/MIHO005"
+    _product_image_url = "https://energenie4u.co.uk/res/images/products/large/MIHO005%20WEBSITE.jpg"
+    _product_user_guide = "https://energenie4u.co.uk/res/pdfs/ENER035%20user%20guide.pdf"
 
     """An Energenie MiHome Adaptor Plus"""
     def __init__(self, **kw_args):

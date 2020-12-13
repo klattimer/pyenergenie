@@ -9,6 +9,7 @@ class MIHO004(MiHomeDevice):
     _description = "The Monitor adapter allows you to monitor the power being used by an attached appliance."
     _product_rf = "FSK(tx)"
     _product_url = "https://energenie4u.co.uk/catalogue/product/MIHO004"
+    _product_image_url = "https://energenie4u.co.uk/res/images/products/large/MIHO004%20WEBSITE.jpg"
 
     """Energenie Monitor-only Adaptor"""
     def __init__(self, **kw_args):

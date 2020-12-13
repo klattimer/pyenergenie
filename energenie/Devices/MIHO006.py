@@ -9,6 +9,8 @@ class MIHO006(MiHomeDevice):
     _product_description = "This allows you to monitor the power and energy usage of your entire home."
     _product_rf = "FSK(tx)"
     _product_url = "https://energenie4u.co.uk/catalogue/product/MIHO006"
+    _product_image_url = "https://energenie4u.co.uk/res/images/products/large/MIHO006%20WEBSITE.jpg"
+    _product_user_guide = "https://energenie4u.co.uk/res/pdfs/MIHO006-HouseMonitor-User-Guide-v1.2.pdf"
 
     """An Energenie MiHome Home Monitor"""
     def __init__(self, **kw_args):

@@ -23,6 +23,7 @@ class Device():
     _product_rf = None
     _product_url = None
     _product_user_guide = None
+    _product_image_url = None
 
     @property
     def address(self):
@@ -101,6 +102,7 @@ class Device():
             'description': cls._product_description,
             'rf': cls._product_rf,
             'url': cls._product_url,
+            'image': cls._product__image_url,
             'user_guide': cls._product_user_guide,
             'features': cls.features()
         }
@@ -240,6 +242,7 @@ class Device():
         logging.warning("send_message %s" % payload)
         # A raw device has no knowledge of how to send, the sub class provides that.
 
+    # DEPRECATE
     def when_updated(self, callback):
         """Provide a callback handler to be called when a new message arrives"""
         self.updated_cb = callback

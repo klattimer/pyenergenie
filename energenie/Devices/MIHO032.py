@@ -10,6 +10,7 @@ class MIHO032(MiHomeDevice):
     _product_rf = "FSK(tx)"
     _product_url = "https://energenie4u.co.uk/catalogue/product/MIHO032"
     _product_user_guide = "https://energenie4u.co.uk/res/pdfs/MIHO032-Motion-Sensor-User-Guide-v1.3-outlines.pdf"
+    _product_image_url = "https://energenie4u.co.uk/res/images/products/large/MIHO032%20WEBSITE.jpg"
 
     """An Energenie Motion Sensor"""
     def __init__(self, **kw_args):

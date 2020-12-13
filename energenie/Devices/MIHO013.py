@@ -81,6 +81,8 @@ class MIHO013(MiHomeDevice):
     _product_description = "Electronic, Thermostatic Radiator Valve"
     _product_rf = "FSK(tx, rx)"
     _product_url = "https://energenie4u.co.uk/catalogue/product/MIHO013"
+    _product_image_url = "https://energenie4u.co.uk/res/images/products/large/MIHO013%20WEBSITE.jpg"
+    _product_user_guide = "https://energenie4u.co.uk/res/pdfs/MIHO013%20user%20guide%20V1%202.2.pdf"
 
     """An Energenie MiHome eTRV Radiator Valve"""
     def __init__(self, **kw_args):
