@@ -226,6 +226,7 @@ def main():
 
     elif args.list:
         registry = Registry.DeviceRegistry.singleton()
+        devicefactory = Devices.DeviceFactory.singleton()
 
         report_data = {}
         report_data['supported_devices'] = {k: devicefactory[k].describe() for k in devicefactory.keys()}

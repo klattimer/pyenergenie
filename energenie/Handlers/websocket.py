@@ -50,7 +50,7 @@ class WebSocketHandler(Handler):
                 # else:
                 #     logging.error("unsupported event: {}", data)
         finally:
-            await unregister(websocket)
+            await self.unregister(websocket)
         #
         # name = await websocket.recv()
         # print(f"< {name}")
