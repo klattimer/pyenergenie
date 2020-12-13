@@ -1,7 +1,7 @@
 from setuptools import setup
 import setuptools
 
-PYENERGENIE_VERSION = '0.2'
+PYENERGENIE_VERSION = '0.9'
 PYENERGENIE_DOWNLOAD_URL = (
     'https://github.com/klattimer/pyenergenie/tarball/' + PYENERGENIE_VERSION
 )
@@ -34,7 +34,6 @@ setup(
         # 'wakeonlan',
     ],
     data_files=[
-        ('config', ['data/config.json']),
         ('energenie/drv', ['energenie/drv/radio_rpi.so'])
     ],
     classifiers=[

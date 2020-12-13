@@ -75,3 +75,7 @@ We welcome any contributions, currently the following areas need some work.
  - Testing devices which haven't been fully tested
  - Testing anything and everything
  - Porting the pilight transmit/rececive for raw codes so we can add learning capabilities
+ - Fixing the build scripts such that it will build for raspberry pi 1 and raspberry pi 2+
+   without requiring editing the gpio base.
+ - Fixing the setup.py such that it executes the drv/build_rpi on raspberry pi and build_mac on mac
+ - Adding a build_win for windows builds (some brave windows dev can handle that if they like)

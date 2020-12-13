@@ -2,6 +2,15 @@
 
 ## Overview
 
+## The Threads
+
+The Energenie class operates in it's own thread, receiving input from the SPI device and triggering
+the appropriate functions. The WebSocket Handler operates in it's own thread using asyncio and the MQTT
+Handler operates a thread for subscriptions. To top it all off the flask webserver has to operate in a thread
+too which doesn't make flask too happy and therefore auto-reload is disabled.
+
+The main thread is blocked by either the command loop or the iterative loop holding the application running.
+
 ## Devices
 
 The basic device driver architecture follows a plugin type system where the files in the folder
