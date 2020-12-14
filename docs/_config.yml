@@ -1,1 +1,4 @@
 theme: jekyll-theme-cayman
+name: PyEnergenie
+description: Open Source RaspberryPi Energenie ENER314-RT & Homebrew IoT integration
+markdown: kramdown
