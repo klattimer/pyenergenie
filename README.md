@@ -79,3 +79,10 @@ We welcome any contributions, currently the following areas need some work.
    without requiring editing the gpio base.
  - Fixing the setup.py such that it executes the drv/build_rpi on raspberry pi and build_mac on mac
  - Adding a build_win for windows builds (some brave windows dev can handle that if they like)
+ - Authentication and authorisation of some kind, read/write groups
+
+[Architecture](docs/Architecture.md)
+[MQTT integration](docs/MQTT.md)
+[WebSocket integration](docs/WebSockets.md)
+[REST API documentation](docs/API.md)
+[RFM69 homebrew transceiver](docs/RFM69.md)
