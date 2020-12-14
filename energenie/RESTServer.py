@@ -7,12 +7,6 @@ import threading
 app = Flask(__name__)
 
 __version__ = "v1"
-#
-# class InvalidData(werkzeug.exceptions.HTTPException):
-#     code = 507
-#     description = 'Not enough storage space.'
-#
-# app.register_error_handler(InsufficientStorage, handle_507)
 
 
 @app.route('/')

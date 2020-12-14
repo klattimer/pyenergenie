@@ -29,6 +29,13 @@ class WebSocketHandler(Handler):
         asyncio.get_event_loop().run_until_complete(start_server)
         asyncio.get_event_loop().run_forever()
 
+    def serialise(self):
+        data = super.serialise()
+        data.update({
+            'port': self.port
+        })
+        return data
+
     async def register(self, client):
         self._clients.add(client)
 
