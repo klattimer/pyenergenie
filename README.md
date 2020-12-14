@@ -81,8 +81,9 @@ We welcome any contributions, currently the following areas need some work.
  - Adding a build_win for windows builds (some brave windows dev can handle that if they like)
  - Authentication and authorisation of some kind, read/write groups
 
-[Architecture](docs/Architecture.md)
-[MQTT integration](docs/MQTT.md)
-[WebSocket integration](docs/WebSockets.md)
-[REST API documentation](docs/API.md)
-[RFM69 homebrew transceiver](docs/RFM69.md)
+## Site Index
+- [Architecture](docs/Architecture.md)
+- [MQTT integration](docs/MQTT.md)
+- [WebSocket integration](docs/WebSockets.md)
+- [REST API documentation](docs/API.md)
+- [Hardware](docs/RFM69.md)
