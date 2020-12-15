@@ -4,6 +4,7 @@ from energenie.Registry import DeviceRegistry
 from energenie.Devices import DeviceFactory
 from energenie.Handlers import HandlerRegistry
 import threading
+import time
 app = Flask(__name__)
 
 __version__ = "v1"
@@ -104,6 +105,21 @@ def handlers(name=None):
     return jsonify({
         'status': 'ok'
     })
+
+
+@app.route('/api/v1/teach/', methods=['POST'])
+def teach():
+    data = request.get_json()
+    device = DeviceFactory.get_device_from_model("MiHomeLight", **{
+        "name": data['name'],
+        "device_id": [data['group_code'], data['device_id']]
+    })
+    for i in range(100):
+        if i % 2 == 0:
+            device.turn_on()
+        else:
+            device.turn_off()
+        time.sleep(0.01)
 
 
 def start():

@@ -13,7 +13,6 @@ import logging
 import json
 import math
 import os
-from queue import Queue
 
 from . import radio
 from . import Devices
@@ -50,7 +49,6 @@ class DiscoveryMode(Enum):
 class Energenie(threading.Thread):
     def __init__(self):
         super(Energenie, self).__init__()
-        self.command_queue = Queue(maxsize=0)
         """Start the Energenie system running"""
 
         radio.init()
@@ -103,8 +101,6 @@ class Energenie(threading.Thread):
         # IMPROVE: Set up logging here
         while self.running is True:
             self.loop()
-
-            # Process the command queue
 
     def stop(self):
         """Cleanly close the Energenie system when finished"""

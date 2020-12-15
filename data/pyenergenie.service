@@ -2,7 +2,7 @@
 Description=PyEnergenie
 After=network.target
 [Service]
-ExecStart=/usr/local/bin/pyenergenie
+ExecStart=/usr/local/bin/pyenergenie -b
 Restart=always
 RestartSec=5
 [Install]

@@ -109,6 +109,10 @@ class OpenThingsAirInterface():
 
 
 class TwoBitAirInterface():
+    """
+    https://en.wikipedia.org/wiki/Differential_Manchester_encoding
+    As per the RT1527 encoder - https://www.electrodragon.com/w/images/7/7b/RT1527E.pdf
+    """
     def __init__(self):
         self.radio = radio  # aids mocking later
 
