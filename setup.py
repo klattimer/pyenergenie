@@ -34,7 +34,8 @@ setup(
         # 'wakeonlan',
     ],
     data_files=[
-        ('energenie/drv', ['energenie/drv/radio_rpi.so'])
+        ('energenie/drv', ['energenie/drv/radio_rpi.so']),
+        [('etc/systemd/system/', ['data/pyenergenie.service'])]
     ],
     classifiers=[
         'Intended Audience :: Developers',

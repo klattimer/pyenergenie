@@ -133,3 +133,9 @@ class MQTTHandler(Handler):
 
     def ask(self):
         pass
+
+    def alarm(self, device, key, value, alarm_reason):
+        topic = '/'.join([self.topic_prefix, "alarms", device.location if device.location else "default", device.uuid, key])
+        self.client.publish(topic, value)
+        topic = '/'.join([self.topic_prefix, "alarms", device.location if device.location else "default", device.uuid, "reason"])
+        self.client.publish(topic, alarm_reason)

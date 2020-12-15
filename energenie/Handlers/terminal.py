@@ -10,3 +10,6 @@ class TerminalEchoHandler(Handler):
 
     def handle_reading(self, device, key, value):
         print ("Received reading: %s -> %s = %s" % (str(device), str(key), str(value)))
+
+    def ask(self):
+        pass

@@ -84,6 +84,10 @@ class MIHO013(MiHomeDevice):
     _product_image_url = "https://energenie4u.co.uk/res/images/products/large/MIHO013%20WEBSITE.jpg"
     _product_user_guide = "https://energenie4u.co.uk/res/pdfs/MIHO013%20user%20guide%20V1%202.2.pdf"
 
+    _temperature_alarm_low = 5
+    _temperature_alarm_high = 35
+    _battery_alarm_low = 2.7
+
     """An Energenie MiHome eTRV Radiator Valve"""
     def __init__(self, **kw_args):
         MiHomeDevice.__init__(self, **kw_args)
@@ -133,9 +137,17 @@ class MIHO013(MiHomeDevice):
                 if paramid == OpenThings.PARAM_TEMPERATURE:
                     self.readings.ambient_temperature = value
                     HandlerRegistry.handle_reading(self.uuid, 'ambient_temperature', value)
+                    if value < self._temperature_alarm_low:
+                        HandlerRegistry.alarm(self.uuid, 'ambient_temperature', value, 'Temperature Too Low')
+                    elif value > self._temperature_alarm_high:
+                        HandlerRegistry.alarm(self.uuid, 'ambient_temperature', value, 'Temperature Too High')
+
                 elif paramid == OpenThings.PARAM_VOLTAGE:
                     self.readings.battery_voltage = value
                     HandlerRegistry.handle_reading(self.uuid, 'battery_voltage', value)
+                    if value < _battery_alarm_low:
+                        HandlerRegistry.alarm(self.uuid, 'battery_voltage', value, 'Battery Running Low')
+
                 elif paramid == OpenThings.PARAM_DIAGNOSTICS:
                     self.readings.diagnostic_flags = value
                     HandlerRegistry.handle_reading(self.uuid, 'diagnostic_flags', value)

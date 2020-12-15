@@ -1,0 +1,9 @@
+[Unit]
+Description=PyEnergenie
+After=network.target
+[Service]
+ExecStart=/usr/local/bin/pyenergenie
+Restart=always
+RestartSec=5
+[Install]
+WantedBy=multi-user.target

@@ -28,6 +28,9 @@ class Handler:
             'enabled': self.enabled
         }
 
+    def ask(self):
+        pass
+
     def destroy(self):
         pass
 
@@ -45,6 +48,9 @@ class Handler:
         pass
 
     def handle_reading(self, device, key, value):
+        pass
+
+    def alarm(self, device, key, value, alarm_reason):
         pass
 
 
@@ -110,6 +116,10 @@ class HandlerRegistry:
         if cls.__single is None:
             cls.__single = cls()
         return cls.__single
+
+    @classmethod
+    def alarm(cls, device, key, value, alarm_reason):
+        cls.singleton()._alarm(device, key, value, alarm_reason)
 
     @classmethod
     def handle_reading(cls, device, key, value):
@@ -179,6 +189,11 @@ class HandlerRegistry:
         for handler in self._handlers.values():
             if handler.enabled is False: continue
             handler.handle_reading(device, key, value)
+
+    def _alarm(self, device, key, value, alarm_reason):
+        for handler in self._handlers.values():
+            if handler.enabled is False: continue
+            handler.alarm(device, key, value, alarm_reason)
 
     def ask(self):
         pass

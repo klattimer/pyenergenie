@@ -67,7 +67,7 @@ def device(device_uuid):
 
 
 # - Get/Set value on device
-@app.route('/api/v1/device/<uuid>/states/<state>', methods=['GET', 'POST'])
+@app.route('/api/v1/devices/<device_uuid>/states/<state>', methods=['GET', 'POST'])
 def states(device_uuid, state):
     registry = DeviceRegistry.singleton()
     if request.method == 'POST':
