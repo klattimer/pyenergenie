@@ -153,6 +153,8 @@ class Device():
                 self.air_interface = DeviceFactory.fsk_interface
             elif self.__class__._product_rf.startswith('OOK'):
                 self.air_interface = DeviceFactory.ook_interface
+            elif self.__class__._product_rf.startswith():
+                self.air_interface = DeviceFactory.ev1527_interface
             else:
                 raise Exception("Air interface is undefined for this device %s(%s):%s" % (name, str(device_id), uuid))
         self.device_id = self.parse_device_id(device_id)
@@ -256,6 +258,7 @@ class DeviceFactory:
     __single = None
     ook_interface = OnAir.TwoBitAirInterface()
     fsk_interface = OnAir.OpenThingsAirInterface()
+    ev1527_interface = OnAir.EV1527Interface()
 
     @classmethod
     def singleton(cls):
